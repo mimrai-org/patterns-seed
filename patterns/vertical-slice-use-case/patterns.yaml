@@ -1,0 +1,83 @@
+name: vertical-slice-use-case
+version: 0.1.0
+description: TypeScript backend operations organized as cohesive delivery-to-effect slices that remain independently changeable.
+scope: shareable
+stack:
+  - typescript
+  - node
+structure:
+  - path: structure/operation-anatomy.md
+    is: The transport, contract, validation, handler, ports, adapters, and tests owned by one operation.
+  - path: structure/dependency-and-runtime-flow.md
+    is: How source dependencies stay local while an incoming request flows through a complete slice.
+  - path: structure/cross-slice-composition.md
+    is: How workflows coordinate several operations without importing sibling implementation details.
+  - path: structure/testing-strategy.md
+    is: Where contract, handler, adapter, architecture, and end-to-end tests provide distinct confidence.
+rules:
+  - path: rules/slice-cohesion-and-ownership.md
+    enforces: Each operation owns one observable outcome and keeps its reasons to change together.
+  - path: rules/dependency-direction.md
+    enforces: Handler policy remains independent from transport, concrete adapters, bootstrap, and sibling slices.
+  - path: rules/input-validation.md
+    enforces: Untrusted input is parsed at the edge while state-dependent business decisions stay in the handler or domain model.
+  - path: rules/port-design.md
+    enforces: A slice owns narrow contracts for volatile external capabilities instead of depending on generic infrastructure services.
+  - path: rules/transaction-boundaries.md
+    enforces: A state-changing use case owns its consistency decision and uses one explicit transaction only when its atomicity requirement needs one.
+  - path: rules/invocation-and-cqrs.md
+    enforces: Commands and queries express intent without requiring a mediator, bus, separate store, or application-wide handler style.
+  - path: rules/shared-primitives.md
+    enforces: Shared contains only stable domain-neutral primitives with proven independent consumers.
+recipes:
+  - path: recipes/add-operation.md
+    when: A new request, job, or message needs one independently changeable application outcome.
+  - path: recipes/compose-operations.md
+    when: One owned workflow requires capabilities currently implemented by several slices.
+  - path: recipes/add-transaction.md
+    when: Several local actions must commit atomically or an outbox must share the operation's commit.
+  - path: recipes/promote-shared-primitive.md
+    when: Repeated code may represent a stable domain-neutral primitive rather than coincidental similarity.
+  - path: recipes/introduce-dispatcher.md
+    when: Direct invocation no longer provides enough centralized dispatch behavior or registration support.
+  - path: recipes/enforce-boundaries.md
+    when: Slice isolation and inward dependency rules need deterministic CI enforcement.
+adrs:
+  - path: adrs/0001-organize-by-operation.md
+    decides: The primary unit of organization is one observable use-case outcome rather than a technical layer.
+  - path: adrs/0002-direct-invocation-by-default.md
+    decides: Transports call explicit handlers directly unless a dispatcher solves a measured cross-cutting need.
+  - path: adrs/0003-use-slice-owned-ports.md
+    decides: Each slice defines only the outbound capabilities its handler consumes and concrete adapters remain replaceable.
+  - path: adrs/0004-coordinate-cross-slice-workflows.md
+    decides: Multi-operation business workflows receive an explicit owner and injected capabilities instead of sibling implementation imports.
+  - path: adrs/0005-own-the-transaction-at-use-case-level.md
+    decides: Consistency and any required transaction are defined around the state-changing use case rather than hidden inside repositories or transports.
+boundaries:
+  - from: "**/src/shared/**"
+    to: "**/operations/**"
+    why: Stable shared primitives must remain independent from application-specific operations.
+  - from: "**/src/shared/**"
+    to: "**/src/bootstrap/**"
+    why: Reusable primitives must not know how the executable is assembled.
+  - from: "**/operations/**"
+    to: "**/src/bootstrap/**"
+    why: Slices are assembled by bootstrap and must not select process-level wiring.
+  - from: "**/operations/*/handler.ts"
+    to: "**/operations/*/transport.ts"
+    why: Use-case policy must remain independent from its delivery mechanism.
+  - from: "**/operations/*/handler.ts"
+    to: "**/operations/*/adapters/**"
+    why: Handlers consume slice-owned ports rather than concrete external integrations.
+  - from: "**/operations/*/transport.ts"
+    to: "**/operations/*/adapters/**"
+    why: Inbound mapping invokes the handler surface and must not select concrete outbound integrations.
+  - from: "**/operations/*/contract.ts"
+    to: "**/operations/*/transport.ts"
+    why: Operation input and result contracts must not expose protocol-specific implementation.
+  - from: "**/operations/*/ports.ts"
+    to: "**/operations/*/transport.ts"
+    why: Outbound capability contracts must remain independent from inbound delivery.
+  - from: "**/operations/*/ports.ts"
+    to: "**/operations/*/adapters/**"
+    why: Slice-owned contracts define what adapters implement, not the reverse.

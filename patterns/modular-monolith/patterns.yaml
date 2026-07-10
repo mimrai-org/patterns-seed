@@ -1,0 +1,89 @@
+name: modular-monolith
+version: 0.1.0
+description: A TypeScript backend deployed as one application and divided into independently owned modules with explicit APIs and data boundaries.
+scope: shareable
+stack:
+  - typescript
+  - node
+structure:
+  - path: structure/system-and-module-layout.md
+    is: How the host, capability modules, private module internals, and shared primitives are organized.
+  - path: structure/module-public-api.md
+    is: What a module may expose and which implementation details remain private.
+  - path: structure/module-communication.md
+    is: How synchronous public calls and asynchronous integration events connect modules.
+  - path: structure/data-ownership.md
+    is: How modules own persistence models, migrations, and access to their data.
+  - path: structure/testing-and-enforcement.md
+    is: How module behavior and architectural boundaries are verified.
+rules:
+  - path: rules/module-encapsulation.md
+    enforces: Consumers import a module only through its public entry point.
+  - path: rules/internal-dependency-direction.md
+    enforces: Module domain and application code do not depend on module adapters.
+  - path: rules/cross-module-communication.md
+    enforces: Modules collaborate through explicit contracts rather than implementation imports.
+  - path: rules/data-ownership.md
+    enforces: A module never reads or writes another module's private persistence model.
+  - path: rules/composition-roots.md
+    enforces: Each module assembles its internals while the host wires public APIs and lifecycles in dependency order.
+  - path: rules/shared-code.md
+    enforces: Shared code stays domain-agnostic and does not become a cross-module implementation bucket.
+recipes:
+  - path: recipes/add-module.md
+    when: A new cohesive business capability needs an independent module boundary.
+  - path: recipes/add-module-use-case.md
+    when: New behavior belongs inside an existing module.
+  - path: recipes/expose-module-operation.md
+    when: Another part of the application needs a module capability.
+  - path: recipes/connect-modules.md
+    when: One module needs an immediate result or a decoupled reaction from another.
+  - path: recipes/add-module-persistence.md
+    when: A module begins owning persistent data.
+  - path: recipes/harden-boundaries-in-ci.md
+    when: Module entry points and dependency constraints need deterministic enforcement.
+adrs:
+  - path: adrs/0001-single-deployable-strong-modules.md
+    decides: The system remains one deployable unit with strong internal capability boundaries.
+  - path: adrs/0002-public-module-entry-points.md
+    decides: Each module exposes one deliberate public API and keeps implementation details private.
+  - path: adrs/0003-module-owned-data.md
+    decides: Data ownership follows module boundaries even when infrastructure is physically shared.
+  - path: adrs/0004-sync-calls-and-integration-events.md
+    decides: Public calls serve immediate collaboration while integration events serve decoupled reactions.
+  - path: adrs/0005-enforce-architecture-in-ci.md
+    decides: Module boundaries are checked automatically instead of relying on convention alone.
+boundaries:
+  - from: "**/src/host/**"
+    to: "**/src/modules/*/internal/**"
+    why: The host composes modules through public entry points only.
+  - from: "**/src/host/**"
+    to: "**/src/modules/*/contracts/**"
+    why: Public contracts are consumed through each module entry point.
+  - from: "**/src/host/**"
+    to: "**/src/modules/*/register.ts"
+    why: Module registration is re-exported by the public entry point.
+  - from: "**/src/modules/**"
+    to: "**/src/host/**"
+    why: Modules must remain independent from their executable host.
+  - from: "**/src/modules/*/contracts/**"
+    to: "**/src/modules/*/internal/**"
+    why: Public contracts must remain independent from private implementation.
+  - from: "**/src/modules/*/contracts/**"
+    to: "**/src/modules/*/register.ts"
+    why: Public contracts must not participate in runtime composition.
+  - from: "**/src/modules/*/internal/domain/**"
+    to: "**/src/modules/*/internal/application/**"
+    why: Module domain policy must not depend on application orchestration.
+  - from: "**/src/modules/*/internal/domain/**"
+    to: "**/src/modules/*/internal/adapters/**"
+    why: Module domain policy must remain infrastructure-independent.
+  - from: "**/src/modules/*/internal/application/**"
+    to: "**/src/modules/*/internal/adapters/**"
+    why: Adapters satisfy application dependencies, not the reverse.
+  - from: "**/src/shared/**"
+    to: "**/src/modules/**"
+    why: Shared primitives must not depend on a capability module.
+  - from: "**/src/shared/**"
+    to: "**/src/host/**"
+    why: Shared primitives must remain independent from application assembly.
