@@ -1,0 +1,72 @@
+name: typescript-hexagonal-service
+version: 0.1.0
+description: A TypeScript service organized around use cases and technology-neutral ports with replaceable inbound and outbound adapters.
+scope: shareable
+stack:
+  - typescript
+  - node
+structure:
+  - path: structure/layers-and-roles.md
+    is: The responsibilities of domain, application, adapters, and bootstrap code.
+  - path: structure/ports-and-adapters.md
+    is: How inbound and outbound adapters cross the application boundary through narrow ports.
+  - path: structure/dependency-and-runtime-flow.md
+    is: How compile-time dependencies point inward while runtime calls cross injected ports.
+  - path: structure/testing-strategy.md
+    is: Where core, port-contract, adapter-integration, and end-to-end tests belong.
+rules:
+  - path: rules/dependency-direction.md
+    enforces: Domain and application code never import adapters or bootstrap code.
+  - path: rules/port-design.md
+    enforces: Ports express cohesive application needs without leaking technology-specific types.
+  - path: rules/model-mapping.md
+    enforces: Transport, persistence, and provider models are translated at adapter boundaries.
+  - path: rules/composition-root.md
+    enforces: Concrete adapter selection and lifecycle wiring happen only in bootstrap.
+  - path: rules/use-case-boundaries.md
+    enforces: Use cases orchestrate one application outcome while domain objects protect business invariants.
+recipes:
+  - path: recipes/add-use-case.md
+    when: A new application operation is introduced.
+  - path: recipes/add-inbound-adapter.md
+    when: A new protocol or trigger must invoke an existing use case.
+  - path: recipes/add-outbound-adapter.md
+    when: The application needs a new external capability.
+  - path: recipes/replace-adapter.md
+    when: An external technology or provider changes without changing application policy.
+  - path: recipes/test-port-contract.md
+    when: Multiple adapters must satisfy the same application-owned contract.
+adrs:
+  - path: adrs/0001-separate-inside-from-outside.md
+    decides: Business policy remains independent from delivery and infrastructure technology.
+  - path: adrs/0002-application-owns-outbound-ports.md
+    decides: Outbound contracts are owned by the application code that consumes them.
+  - path: adrs/0003-use-explicit-composition-root.md
+    decides: Concrete dependencies are selected and assembled at the executable edge.
+  - path: adrs/0004-shape-ports-around-use-cases.md
+    decides: Ports expose cohesive capabilities rather than universal infrastructure interfaces.
+boundaries:
+  - from: "**/src/domain/**"
+    to: "**/src/application/**"
+    why: Domain policy must not depend on application orchestration.
+  - from: "**/src/domain/**"
+    to: "**/src/adapters/**"
+    why: Domain policy must remain independent from external technology.
+  - from: "**/src/domain/**"
+    to: "**/src/bootstrap/**"
+    why: The domain must not know how the executable is assembled.
+  - from: "**/src/application/**"
+    to: "**/src/adapters/**"
+    why: Adapters implement application-owned ports, not the reverse.
+  - from: "**/src/application/**"
+    to: "**/src/bootstrap/**"
+    why: Use cases must not select their concrete dependencies.
+  - from: "**/src/adapters/inbound/**"
+    to: "**/src/adapters/outbound/**"
+    why: Inbound adapters reach external capabilities through application ports.
+  - from: "**/src/adapters/outbound/**"
+    to: "**/src/adapters/inbound/**"
+    why: Outbound adapters must not depend on delivery mechanisms.
+  - from: "**/src/adapters/**"
+    to: "**/src/bootstrap/**"
+    why: Adapters are assembled by bootstrap and do not control composition.
