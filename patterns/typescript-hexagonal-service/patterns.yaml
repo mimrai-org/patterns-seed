@@ -1,4 +1,3 @@
-schemaVersion: 2
 name: typescript-hexagonal-service
 title: Build a Framework-Independent TypeScript Service
 version: 0.2.0

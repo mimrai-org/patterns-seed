@@ -1,4 +1,3 @@
-schemaVersion: 2
 name: modular-monolith
 title: Structure One Backend with Strong Module Boundaries
 version: 0.2.0
