@@ -1,7 +1,37 @@
+schemaVersion: 2
 name: vertical-slice-use-case
-version: 0.1.0
-description: TypeScript backend operations organized as cohesive delivery-to-effect slices that remain independently changeable.
+title: Organize Backend Features by Use Case
+version: 0.2.0
+description: Keep each backend request, job, or message with its validation, business logic, dependencies, and tests.
 scope: shareable
+category: code-organization
+targets:
+  - backend-operation
+  - backend-service
+languages:
+  - typescript
+frameworks: []
+runtimes:
+  - node
+tags:
+  - backend
+  - vertical-slice
+  - use-case-first
+  - operation-folders
+  - request-handlers
+aliases:
+  - vertical slice architecture
+  - use case folders
+related:
+  - pattern: modular-monolith
+    relationship: composes-with
+    why: Vertical slices can organize operations inside a larger capability module without replacing its public API or data ownership.
+  - pattern: typescript-hexagonal-service
+    relationship: complements
+    why: Slices choose the unit of change while hexagonal boundaries isolate external technology where that cost is justified.
+  - pattern: frontend-feature-modules
+    relationship: complements
+    why: Both colocate code by independently changing outcomes on opposite sides of a full-stack application.
 stack:
   - typescript
   - node

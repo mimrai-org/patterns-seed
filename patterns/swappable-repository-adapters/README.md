@@ -1,9 +1,31 @@
-# Swappable repository adapters
+# Replace Database Adapters Safely
 
-Isolate one meaningful persistence capability behind a narrow contract owned by the code that consumes
-it. Each storage technology implements that contract in its own adapter, owns its persistence records
-and mappers, and proves the same observable semantics through a shared contract suite. Bootstrap selects
-one adapter; application policy never imports the selection or the storage tool.
+> **Known as:** Repository adapters · Persistence ports
+>
+> **Pattern ID:** `swappable-repository-adapters` · **Version:** `0.2.0`
+>
+> **Category:** Persistence · **Target:** Backend data access
+>
+> **Language:** TypeScript · **Framework:** Independent · **Runtime:** Node.js
+
+Change databases without rewriting business logic, using focused interfaces, shared behavior tests,
+and a reversible migration.
+
+## Install
+
+```sh
+patterns add mimrai-org/patterns-seed/patterns/swappable-repository-adapters#swappable-repository-adapters-v0.2.0
+```
+
+This installs architecture guidance and checks; it does not create adapters, move data, or change
+application code.
+
+## What it solves
+
+Application code becomes expensive to test or migrate when it directly imports an ORM, driver, storage
+record, or vendor query API. This pattern places one meaningful persistence capability behind a focused
+interface owned by the code that consumes it. Each database adapter maps its own records and proves the
+same observable behavior through a shared contract suite.
 
 ```text
 compile time:  bootstrap -> selected adapter -> application-owned repository port
@@ -86,7 +108,7 @@ layout, add a project-owned architecture rule aligned with its paths. For extern
 import-path restriction or dependency architecture test to application files. These checks complement the
 manifest; the manifest must not be described as enforcing imports it cannot observe.
 
-## Non-negotiable decisions
+## Key rules
 
 1. Shape the port around one cohesive application capability. Do not create `Repository<T>` with
    universal CRUD, arbitrary filters, or a transaction escape hatch.
@@ -126,6 +148,40 @@ manifest; the manifest must not be described as enforcing imports it cannot obse
   candidate application idempotent and monotonic by source version or position.
 - “Low lag” is operational evidence, not proof of completeness. The final cutover gate is application
   through the fenced source position `Wf` plus successful reconciliation.
+
+## Relationships
+
+- [A framework-independent TypeScript service](../typescript-hexagonal-service/) defines the broader
+  ports-and-adapters boundary; this pattern specializes its outbound side for persistence and migration.
+- [Backend features organized by use case](../vertical-slice-use-case/) can give one operation a focused
+  persistence interface when test control or replacement risk justifies it.
+- [One backend with strong module boundaries](../modular-monolith/) can keep each module's repository
+  interfaces, adapters, migrations, and data ownership inside that module.
+
+This is a local persistence pattern, not a requirement to wrap every database call and not a complete
+service architecture.
+
+## Full guide
+
+- **Structure:** [capability and adapter shape](structure/capability-and-adapter-shape.md),
+  [runtime and dependency flow](structure/runtime-and-dependency-flow.md),
+  [contract and conformance](structure/contract-and-conformance.md),
+  [migration lifecycle](structure/migration-lifecycle.md),
+  [testing layers](structure/testing-layers.md)
+- **Rules:** [port semantics](rules/port-semantics.md), [model mapping](rules/model-mapping.md),
+  [adapter isolation](rules/adapter-isolation.md), [contract testing](rules/contract-testing.md),
+  [consistency and transactions](rules/consistency-and-transactions.md),
+  [cutover and authority](rules/cutover-and-authority.md)
+- **Recipes:** [introduce a persistence port](recipes/introduce-a-persistence-port.md),
+  [add a repository adapter](recipes/add-a-repository-adapter.md),
+  [build the contract suite](recipes/build-the-contract-suite.md),
+  [migrate and cut over](recipes/migrate-and-cut-over.md),
+  [roll back an adapter](recipes/roll-back-an-adapter.md),
+  [retire an adapter](recipes/retire-an-adapter.md)
+- **Decisions:** [own a narrow persistence port](adrs/0001-own-a-narrow-persistence-port.md),
+  [keep mappers inside adapters](adrs/0002-keep-mappers-inside-adapters.md),
+  [prove substitution with a shared contract](adrs/0003-prove-substitution-with-a-shared-contract.md),
+  [maintain one authoritative writer](adrs/0004-maintain-one-authoritative-writer.md)
 
 Start with [the capability shape](structure/capability-and-adapter-shape.md), then use
 [the contract-suite recipe](recipes/build-the-contract-suite.md). For an existing direct dependency,

@@ -1,10 +1,31 @@
-# Vertical slice use cases
+# Organize Backend Features by Use Case
 
-Organize a TypeScript backend around independently changeable operations. One operation owns the
-complete path from an inbound request to an observable result: transport mapping, input validation,
-application handling, any outbound capability contracts or private adapters it needs, and tests. Code
-that changes for the same outcome stays close; unrelated operations do not become coupled through
-global service layers.
+> **Known as:** Vertical slice architecture · Use-case folders
+>
+> **Pattern ID:** `vertical-slice-use-case` · **Version:** `0.2.0`
+>
+> **Category:** Code organization · **Target:** Backend operations and services
+>
+> **Language:** TypeScript · **Framework:** Independent · **Runtime:** Node.js
+
+Keep each backend request, job, or message with its validation, business logic, dependencies, and
+tests. Code that changes for one outcome stays together instead of being spread across global
+controller, service, and repository folders.
+
+## Install
+
+```sh
+patterns add mimrai-org/patterns-seed/patterns/vertical-slice-use-case#vertical-slice-use-case-v0.2.0
+```
+
+This installs architecture guidance and checks; it does not create operation folders or modify source
+code.
+
+## What it solves
+
+In a horizontally layered backend, one change often crosses several distant technical folders and
+broad shared services. This pattern makes one observable operation the owner of the complete path from
+an incoming trigger to its result:
 
 ```text
 incoming request
@@ -68,7 +89,7 @@ Manifest import checks apply when these responsibilities use the named canonical
 graph cannot inspect concern mixing inside one file. If deterministic separation becomes important,
 split the roles and register any process-wide adapter path with the repository's architecture checker.
 
-## Core rules
+## Key rules
 
 1. One slice owns one observable operation and its technology-neutral input, result, and expected
    failures.
@@ -88,17 +109,20 @@ split the roles and register any process-wide adapter path with the repository's
    process-wide adapters.
    Concern mixing inside a one-file slice remains a testing and review responsibility.
 
-## Relationship to other patterns
+## Relationships
 
 This pattern chooses the **operation** as the unit of change. It does not choose an independent
 deployment boundary or require a service-wide layer hierarchy.
 
-- A hexagonal service pattern chooses the boundary between application policy and external
-  technology. Its ports-and-adapters discipline can be used inside a slice when that operation needs
-  isolation, but a simple slice does not inherit every hexagonal abstraction by default.
-- A modular monolith chooses a larger capability boundary with a public API and data ownership. Slices
-  may live inside that module as `operations/<operation>`; the module still owns cross-capability APIs,
-  registration, and data rules.
+- [A framework-independent TypeScript service](../typescript-hexagonal-service/) chooses the boundary
+  between application policy and external technology. Its ports-and-adapters discipline can be used
+  inside a slice when that operation needs isolation, but a simple slice does not inherit every
+  hexagonal abstraction by default.
+- [One backend with strong module boundaries](../modular-monolith/) chooses a larger capability
+  boundary with a public API and data ownership. Slices may live inside that module as
+  `operations/<operation>`; the module still owns cross-capability APIs, registration, and data rules.
+- [A React app organized by feature](../frontend-feature-modules/) applies the same change-together
+  principle to user-facing UI capabilities rather than backend operations.
 
 Treat the reference trees as alternative nesting choices, not additive folder mandates. Choose one
 outer layout, then apply slice cohesion inside its owner. The manifest's role globs recognize canonical
@@ -132,6 +156,30 @@ public API and data boundaries still need that architecture's own checks.
   owner, avoid cycles, and reconsider slices that collaborate on nearly every change.
 - Local isolation does not create runtime isolation. Slices still share a process, release, resources,
   and failure domain unless a different deployment architecture is chosen.
+
+## Full guide
+
+- **Structure:** [operation anatomy](structure/operation-anatomy.md),
+  [dependency and runtime flow](structure/dependency-and-runtime-flow.md),
+  [cross-slice composition](structure/cross-slice-composition.md),
+  [testing strategy](structure/testing-strategy.md)
+- **Rules:** [slice cohesion and ownership](rules/slice-cohesion-and-ownership.md),
+  [dependency direction](rules/dependency-direction.md),
+  [input validation](rules/input-validation.md), [port design](rules/port-design.md),
+  [transactions](rules/transaction-boundaries.md),
+  [invocation and optional CQRS](rules/invocation-and-cqrs.md),
+  [shared primitives](rules/shared-primitives.md)
+- **Recipes:** [add an operation](recipes/add-operation.md),
+  [compose operations](recipes/compose-operations.md),
+  [add a transaction](recipes/add-transaction.md),
+  [introduce a dispatcher](recipes/introduce-dispatcher.md),
+  [promote a shared primitive](recipes/promote-shared-primitive.md),
+  [enforce boundaries](recipes/enforce-boundaries.md)
+- **Decisions:** [organize by operation](adrs/0001-organize-by-operation.md),
+  [direct invocation by default](adrs/0002-direct-invocation-by-default.md),
+  [use slice-owned ports](adrs/0003-use-slice-owned-ports.md),
+  [coordinate cross-slice workflows](adrs/0004-coordinate-cross-slice-workflows.md),
+  [own the transaction at use-case level](adrs/0005-own-the-transaction-at-use-case-level.md)
 
 Start with [the operation anatomy](structure/operation-anatomy.md), then follow the recipe for
 [adding an operation](recipes/add-operation.md). Agents should begin with `patterns.yaml` and route

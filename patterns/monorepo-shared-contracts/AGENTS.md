@@ -1,4 +1,4 @@
-# Monorepo shared contracts — agent router
+# Share Type-Safe Contracts Across Monorepo Apps — agent router
 
 Read `patterns.yaml` first. Use its summaries to open only the document required by the current task.
 

@@ -1,7 +1,36 @@
+schemaVersion: 2
 name: typescript-hexagonal-service
-version: 0.1.0
-description: A TypeScript service organized around use cases and technology-neutral ports with replaceable inbound and outbound adapters.
+title: Build a Framework-Independent TypeScript Service
+version: 0.2.0
+description: Keep TypeScript business logic independent from HTTP frameworks, databases, queues, and external providers.
 scope: shareable
+category: service-architecture
+targets:
+  - backend-service
+languages:
+  - typescript
+frameworks: []
+runtimes:
+  - node
+tags:
+  - backend
+  - hexagonal-architecture
+  - ports-and-adapters
+  - dependency-inversion
+  - framework-independent
+aliases:
+  - hexagonal architecture
+  - ports and adapters
+related:
+  - pattern: vertical-slice-use-case
+    relationship: complements
+    why: Vertical slices choose the unit of change while hexagonal boundaries separate application policy from technology.
+  - pattern: modular-monolith
+    relationship: composes-with
+    why: Each capability module can keep its policy behind inward-pointing ports and adapters.
+  - pattern: swappable-repository-adapters
+    relationship: complements
+    why: Replaceable repository adapters apply the outbound adapter idea specifically to persistence and migration.
 stack:
   - typescript
   - node

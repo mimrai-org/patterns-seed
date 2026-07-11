@@ -1,7 +1,38 @@
+schemaVersion: 2
 name: swappable-repository-adapters
-version: 0.1.0
-description: Isolate one persistence capability behind a narrow application-owned repository port, explicit mappers, conforming adapters, and a reversible migration process.
+title: Replace Database Adapters Safely
+version: 0.2.0
+description: Change databases without rewriting business logic, using focused interfaces, shared behavior tests, and a reversible migration.
 scope: shareable
+category: persistence
+targets:
+  - backend-application
+  - persistence-layer
+languages:
+  - typescript
+frameworks: []
+runtimes:
+  - node
+tags:
+  - persistence
+  - database-adapters
+  - repository-pattern
+  - contract-testing
+  - data-migration
+  - rollback
+aliases:
+  - replaceable persistence adapters
+  - repository port
+related:
+  - pattern: typescript-hexagonal-service
+    relationship: specializes
+    why: This pattern applies an application-owned outbound port and adapter boundary specifically to persistence.
+  - pattern: vertical-slice-use-case
+    relationship: composes-with
+    why: A slice can own a focused persistence interface when its data boundary needs isolation or replacement.
+  - pattern: modular-monolith
+    relationship: composes-with
+    why: A capability module can keep its repository port, adapters, migrations, and data ownership inside its boundary.
 stack:
   - typescript
   - node

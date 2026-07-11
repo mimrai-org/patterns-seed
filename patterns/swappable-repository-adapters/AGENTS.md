@@ -1,4 +1,4 @@
-# Swappable repository adapters — agent router
+# Replace Database Adapters Safely — agent router
 
 Read `patterns.yaml` first and open only the smallest indexed document needed for the task.
 

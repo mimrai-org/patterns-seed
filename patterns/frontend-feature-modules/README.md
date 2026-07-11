@@ -1,8 +1,29 @@
-# Frontend feature modules
+# Organize a React App by Feature
 
-Organize a growing React codebase around user-facing capabilities. Each feature owns its UI, remote
-operations, local state, types, and tests; the app layer composes features; shared holds only
-domain-agnostic primitives. Dependencies point in one direction:
+> **Known as:** Frontend feature modules
+>
+> **Pattern ID:** `frontend-feature-modules` · **Version:** `0.2.0`
+>
+> **Category:** Code organization · **Target:** Frontend application
+>
+> **Language:** TypeScript · **Framework:** React · **Runtime:** Browser
+
+Keep each user-facing React feature's UI, state, data access, and tests together behind a clear public
+API. The application composes features, while shared code stays small and domain-neutral.
+
+## Install
+
+```sh
+patterns add mimrai-org/patterns-seed/patterns/frontend-feature-modules#frontend-feature-modules-v0.2.0
+```
+
+This installs architecture guidance and checks; it does not generate or overwrite application code.
+
+## What it solves
+
+Growing React applications often scatter one change across global `components`, `hooks`, `services`,
+and `types` folders. This pattern gives each capability one owner and keeps dependencies moving in one
+direction:
 
 ```text
 app  ──▶  features  ──▶  shared
@@ -49,7 +70,7 @@ src/
 These segments are a menu, not a checklist. Empty directories and one-file abstractions add navigation
 cost without clarifying ownership.
 
-## Core rules
+## Key rules
 
 1. `app` may import feature public APIs and shared primitives.
 2. A feature may import shared primitives, never `app` or another feature.
@@ -77,6 +98,31 @@ cost without clarifying ownership.
   capability, and avoid a catch-all barrel that re-exports private implementation.
 - A feature that grows without internal cohesion may actually contain several capabilities. Split by
   reasons to change, not file count.
+
+## Relationships
+
+- [Backend features organized by use case](../vertical-slice-use-case/) applies the same
+  change-together principle to backend operations rather than React UI capabilities.
+- [Shared type-safe contracts](../monorepo-shared-contracts/) can connect this app to other workspace
+  applications without moving feature behavior into a shared package.
+- Feature-Sliced Design is a related but broader methodology. This pattern deliberately defines only
+  three layers and one feature-isolation rule.
+
+## Full guide
+
+- **Structure:** [layers](structure/layers.md), [feature anatomy](structure/feature-anatomy.md),
+  [public APIs](structure/public-apis.md)
+- **Rules:** [dependency direction](rules/dependency-direction.md),
+  [ownership and placement](rules/ownership-and-placement.md), [shared code](rules/shared-code.md),
+  [testing](rules/testing.md)
+- **Recipes:** [add a feature](recipes/add-feature.md),
+  [expose a feature capability](recipes/expose-feature-capability.md),
+  [compose features](recipes/compose-features.md),
+  [promote shared code](recipes/promote-shared-code.md),
+  [enforce boundaries](recipes/enforce-boundaries.md)
+- **Decisions:** [organize by capability](adrs/0001-organize-by-capability.md),
+  [enforce one-way layers](adrs/0002-enforce-one-way-layers.md),
+  [use explicit entry files](adrs/0003-use-explicit-entry-files.md)
 
 Start with [the layer model](structure/layers.md), then use the recipe for
 [adding a feature](recipes/add-feature.md). Agents should begin with `patterns.yaml` and follow

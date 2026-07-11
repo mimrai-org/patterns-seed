@@ -1,4 +1,4 @@
-# TypeScript hexagonal service — agent router
+# Build a Framework-Independent TypeScript Service — agent router
 
 Read `patterns.yaml` first and select the smallest relevant document from its rich index.
 

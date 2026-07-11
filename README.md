@@ -1,45 +1,85 @@
-# patterns-seed
+# Seed Architecture Patterns
 
-Curated, domain-agnostic architecture patterns for the
-[`patterns`](https://github.com/mimrai-org/patterns) ecosystem.
-
-This repository contains knowledge bundles, not application starters. A pattern describes where code
+Six curated, domain-agnostic architecture guides for the
+[`patterns`](https://github.com/mimrai-org/patterns) ecosystem. Each pattern explains where code
 belongs, which dependencies are allowed, how to extend the architecture, and why its important
-decisions were made. Installing one never generates or overwrites application source code.
+decisions were made.
+
+These are knowledge bundles, not application starters. Installing one never generates or overwrites
+application source code.
+
+## Choose a pattern
+
+Start with the decision you need to make:
+
+```text
+Where is the architectural pressure?
+├── A React app is hard to navigate by capability
+│   └── Organize a React App by Feature
+├── Backend business logic is coupled to frameworks or vendors
+│   └── Build a Framework-Independent TypeScript Service
+├── One backend needs strong internal capability boundaries
+│   └── Structure One Backend with Strong Module Boundaries
+├── Several workspace apps duplicate the same data contracts
+│   └── Share Type-Safe Contracts Across Monorepo Apps
+├── A database must be isolated, tested, or replaced safely
+│   └── Replace Database Adapters Safely
+└── One backend change crosses controllers, services, and repositories
+    └── Organize Backend Features by Use Case
+```
 
 ## Catalog
 
-| Pattern | Use it when | Version |
-| --- | --- | --- |
-| [`frontend-feature-modules`](patterns/frontend-feature-modules/) | A React application needs feature ownership and one-way dependencies | `0.1.0` |
-| [`typescript-hexagonal-service`](patterns/typescript-hexagonal-service/) | A TypeScript service needs a framework-independent core and replaceable adapters | `0.1.0` |
-| [`modular-monolith`](patterns/modular-monolith/) | A backend needs strong capability boundaries without distributed-system overhead | `0.1.0` |
-| [`monorepo-shared-contracts`](patterns/monorepo-shared-contracts/) | Several applications need shared runtime contracts without sharing business implementations | `0.1.0` |
-| [`swappable-repository-adapters`](patterns/swappable-repository-adapters/) | One persistence capability needs conforming adapters and a reversible replacement path | `0.1.0` |
-| [`vertical-slice-use-case`](patterns/vertical-slice-use-case/) | Backend operations should evolve as cohesive slices instead of global technical layers | `0.1.0` |
+| Human guide | Stable Pattern ID | Best for | Stack | Version |
+| --- | --- | --- | --- | --- |
+| [Organize a React App by Feature](patterns/frontend-feature-modules/) | `frontend-feature-modules` | Keeping UI, state, data access, and tests with the feature that owns them | TypeScript · React · Browser | `0.2.0` |
+| [Build a Framework-Independent TypeScript Service](patterns/typescript-hexagonal-service/) | `typescript-hexagonal-service` | Keeping business logic independent from HTTP, databases, queues, and vendors | TypeScript · Node.js · Framework-independent | `0.2.0` |
+| [Structure One Backend with Strong Module Boundaries](patterns/modular-monolith/) | `modular-monolith` | Giving capability modules explicit APIs and data ownership in one deployable | TypeScript · Node.js · Framework-independent | `0.2.0` |
+| [Share Type-Safe Contracts Across Monorepo Apps](patterns/monorepo-shared-contracts/) | `monorepo-shared-contracts` | Sharing validated data shapes without sharing application behavior | TypeScript · Browser/Node.js/Worker/Mobile | `0.2.0` |
+| [Replace Database Adapters Safely](patterns/swappable-repository-adapters/) | `swappable-repository-adapters` | Testing equivalent persistence adapters and planning a reversible migration | TypeScript · Node.js · Framework-independent | `0.2.0` |
+| [Organize Backend Features by Use Case](patterns/vertical-slice-use-case/) | `vertical-slice-use-case` | Keeping each request, job, or message with the code needed for its outcome | TypeScript · Node.js · Framework-independent | `0.2.0` |
+
+The stable Pattern ID is the install identity and directory name. Human titles explain the outcome;
+they do not replace published IDs.
+
+## How the patterns relate
+
+The guides make decisions at different scales and can be combined selectively:
+
+```text
+TypeScript workspace
+├── Shared contract packages connect applications
+├── React application
+│   └── Feature modules organize user-facing capabilities
+└── Backend deployable
+    ├── Capability modules create strong system boundaries
+    └── Inside a service or module
+        ├── Vertical slices organize individual operations
+        ├── Hexagonal boundaries isolate external technology
+        └── Replaceable adapters isolate persistence when needed
+```
+
+This is a map, not a recommendation to install every pattern. For example, vertical slices and
+hexagonal architecture answer different questions and can coexist, while replaceable database
+adapters add value only at a real persistence volatility or migration boundary.
 
 ## Install
 
-Each directory under `patterns/` is an independent bundle:
+Each directory under `patterns/` is an independent bundle. Pin a reviewed release with its matching
+tag:
 
 ```sh
-patterns add mimrai-org/patterns-seed/patterns/frontend-feature-modules
-patterns add mimrai-org/patterns-seed/patterns/typescript-hexagonal-service
-patterns add mimrai-org/patterns-seed/patterns/modular-monolith
-patterns add mimrai-org/patterns-seed/patterns/monorepo-shared-contracts
-patterns add mimrai-org/patterns-seed/patterns/swappable-repository-adapters
-patterns add mimrai-org/patterns-seed/patterns/vertical-slice-use-case
+patterns add mimrai-org/patterns-seed/patterns/frontend-feature-modules#frontend-feature-modules-v0.2.0
+patterns add mimrai-org/patterns-seed/patterns/typescript-hexagonal-service#typescript-hexagonal-service-v0.2.0
+patterns add mimrai-org/patterns-seed/patterns/modular-monolith#modular-monolith-v0.2.0
+patterns add mimrai-org/patterns-seed/patterns/monorepo-shared-contracts#monorepo-shared-contracts-v0.2.0
+patterns add mimrai-org/patterns-seed/patterns/swappable-repository-adapters#swappable-repository-adapters-v0.2.0
+patterns add mimrai-org/patterns-seed/patterns/vertical-slice-use-case#vertical-slice-use-case-v0.2.0
 ```
 
-These commands follow the repository's default branch. Once a release tag exists, pin a production
-install by appending the `<pattern-name>-v<version>` tag, for example:
-
-```sh
-patterns add mimrai-org/patterns-seed/patterns/frontend-feature-modules#frontend-feature-modules-v0.1.0
-```
-
-The catalog at [patterns.directory](https://patterns.directory) is only the discovery index. Git
-remains the source of truth and the distribution channel.
+Omit the `#<pattern-name>-v<version>` suffix only when intentionally following the repository's
+default branch. The catalog at [patterns.directory](https://patterns.directory) is the discovery
+index; Git remains the source of truth and the distribution channel.
 
 ## License
 

@@ -1,7 +1,34 @@
+schemaVersion: 2
 name: frontend-feature-modules
-version: 0.1.0
-description: Feature-owned React modules with one-way app-to-feature-to-shared dependencies and explicit public APIs.
+title: Organize a React App by Feature
+version: 0.2.0
+description: Keep each user-facing React feature's UI, state, data access, and tests together behind a clear public API.
 scope: shareable
+category: code-organization
+targets:
+  - frontend-application
+languages:
+  - typescript
+frameworks:
+  - react
+runtimes:
+  - browser
+tags:
+  - frontend
+  - feature-first
+  - feature-modules
+  - public-api
+  - import-boundaries
+aliases:
+  - frontend feature modules
+  - feature-based React architecture
+related:
+  - pattern: vertical-slice-use-case
+    relationship: complements
+    why: Both organize code by independently changing outcomes, one in a React UI and one in backend operations.
+  - pattern: monorepo-shared-contracts
+    relationship: complements
+    why: A feature-organized React app can consume shared cross-application contracts without importing another app.
 stack:
   - typescript
   - react

@@ -1,7 +1,40 @@
+schemaVersion: 2
 name: monorepo-shared-contracts
-version: 0.1.0
-description: Explicit TypeScript workspace packages for contracts shared by several applications without sharing business implementations or coupling applications together.
+title: Share Type-Safe Contracts Across Monorepo Apps
+version: 0.2.0
+description: Share validated TypeScript data contracts across workspace apps without coupling their business code or release timing.
 scope: shareable
+category: contracts
+targets:
+  - monorepo
+  - multi-application-workspace
+languages:
+  - typescript
+frameworks: []
+runtimes:
+  - browser
+  - node
+  - worker
+  - mobile
+tags:
+  - monorepo
+  - workspaces
+  - shared-contracts
+  - runtime-validation
+  - schema-evolution
+aliases:
+  - shared data contracts
+  - TypeScript contract packages
+related:
+  - pattern: frontend-feature-modules
+    relationship: complements
+    why: A React app can consume shared contracts while keeping feature behavior and framework code local.
+  - pattern: typescript-hexagonal-service
+    relationship: complements
+    why: A service can translate shared wire contracts at an inbound or outbound adapter boundary.
+  - pattern: modular-monolith
+    relationship: complements
+    why: A modular backend can publish cross-application contracts without exposing module internals or business implementations.
 stack:
   - typescript
   - node

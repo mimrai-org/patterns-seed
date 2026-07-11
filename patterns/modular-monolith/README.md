@@ -1,8 +1,29 @@
-# Modular monolith
+# Structure One Backend with Strong Module Boundaries
 
-Build one deployable backend from strongly encapsulated capability modules. Each module owns its
-behavior and data, exposes a small public API, and hides its implementation. A thin host assembles the
-modules into each runtime instance.
+> **Known as:** Modular monolith
+>
+> **Pattern ID:** `modular-monolith` · **Version:** `0.2.0`
+>
+> **Category:** System architecture · **Target:** Backend application
+>
+> **Language:** TypeScript · **Framework:** Independent · **Runtime:** Node.js
+
+Divide one TypeScript backend into capability modules that own their public API, internal code, and
+data while the system remains one versioned deployable.
+
+## Install
+
+```sh
+patterns add mimrai-org/patterns-seed/patterns/modular-monolith#modular-monolith-v0.2.0
+```
+
+This installs architecture guidance and checks; it does not create modules or modify application code.
+
+## What it solves
+
+A single backend can keep simple local calls and one deployment without becoming a codebase where
+every capability reaches into every other capability. Each module hides its implementation behind a
+small public API, owns its data, and is assembled by a thin host.
 
 ```text
                  one versioned deployable; all modules per instance
@@ -52,7 +73,7 @@ src/
 Simple modules may remain flat behind the same public entry point. Internal layering grows only with
 real policy and external boundaries.
 
-## Core rules
+## Key rules
 
 1. Every consumer imports a module through `src/modules/<module>/index.ts`.
 2. A module never imports another module's `internal`, `contracts`, or `register.ts` paths directly.
@@ -86,6 +107,43 @@ real policy and external boundaries.
   explicit external mechanism.
 - A facade that exposes persistence records or internal entities preserves none of the promised
   isolation.
+
+## Relationships
+
+- [Backend features organized by use case](../vertical-slice-use-case/) can organize the operations
+  inside a module without replacing the module's public API or data ownership.
+- [A framework-independent TypeScript service](../typescript-hexagonal-service/) can shape the inward
+  dependency direction inside one or more modules.
+- [Shared type-safe contracts](../monorepo-shared-contracts/) can connect this deployable to other
+  workspace applications without exposing private module code.
+
+A modular monolith does not promise future microservice extraction. Independent deployment is a
+separate decision that requires genuinely independent contracts, data, runtime assumptions, and
+operations.
+
+## Full guide
+
+- **Structure:** [system and module layout](structure/system-and-module-layout.md),
+  [module public API](structure/module-public-api.md),
+  [module communication](structure/module-communication.md),
+  [data ownership](structure/data-ownership.md),
+  [testing and enforcement](structure/testing-and-enforcement.md)
+- **Rules:** [module encapsulation](rules/module-encapsulation.md),
+  [internal dependency direction](rules/internal-dependency-direction.md),
+  [cross-module communication](rules/cross-module-communication.md),
+  [data ownership](rules/data-ownership.md), [composition roots](rules/composition-roots.md),
+  [shared code](rules/shared-code.md)
+- **Recipes:** [add a module](recipes/add-module.md),
+  [add a module use case](recipes/add-module-use-case.md),
+  [expose a module operation](recipes/expose-module-operation.md),
+  [connect modules](recipes/connect-modules.md),
+  [add module persistence](recipes/add-module-persistence.md),
+  [harden boundaries in CI](recipes/harden-boundaries-in-ci.md)
+- **Decisions:** [one deployable with strong modules](adrs/0001-single-deployable-strong-modules.md),
+  [public module entry points](adrs/0002-public-module-entry-points.md),
+  [module-owned data](adrs/0003-module-owned-data.md),
+  [calls and integration events](adrs/0004-sync-calls-and-integration-events.md),
+  [enforce architecture in CI](adrs/0005-enforce-architecture-in-ci.md)
 
 Start with [the system layout](structure/system-and-module-layout.md), then use
 [the add-module recipe](recipes/add-module.md). Agents should begin with `patterns.yaml` and route

@@ -1,4 +1,4 @@
-# Modular monolith — agent router
+# Structure One Backend with Strong Module Boundaries — agent router
 
 Read `patterns.yaml` first and use its rich index to select only the documents needed for the task.
 

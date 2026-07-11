@@ -1,8 +1,31 @@
-# Monorepo shared contracts
+# Share Type-Safe Contracts Across Monorepo Apps
 
-Share payload shapes, runtime schemas, and TypeScript types across several applications through
-explicit workspace packages. Producers and consumers depend on the same capability-sized contract;
-they do not import each other:
+> **Known as:** Shared contract packages · Monorepo shared contracts
+>
+> **Pattern ID:** `monorepo-shared-contracts` · **Version:** `0.2.0`
+>
+> **Category:** Contracts · **Target:** Multi-application TypeScript workspace
+>
+> **Language:** TypeScript · **Framework:** Independent
+>
+> **Runtimes:** Browser, Node.js, workers, and mobile
+
+Share validated TypeScript data contracts across workspace apps without coupling their business code
+or release timing.
+
+## Install
+
+```sh
+patterns add mimrai-org/patterns-seed/patterns/monorepo-shared-contracts#monorepo-shared-contracts-v0.2.0
+```
+
+This installs architecture guidance and checks; it does not create packages or change workspace code.
+
+## What it solves
+
+When a browser app, service, worker, CLI, or mobile app defines the same payload independently, the
+copies drift. Importing one application from another avoids duplication by creating a worse coupling.
+This pattern puts shared boundary vocabulary and runtime validation in an owned workspace package:
 
 ```text
 apps/<producer>  ──▶  packages/contracts-<capability>  ◀──  apps/<consumer>
@@ -58,7 +81,7 @@ Use one contract package per cohesive capability or compatibility boundary. Do n
 per interface, and do not collapse unrelated contracts into `shared-types`. Export deliberate
 subpaths so consumers depend on the smallest stable surface.
 
-## Core rules
+## Key rules
 
 1. Every cross-application contract is owned by a named workspace package.
 2. Applications declare that package as a dependency and import only its public exports.
@@ -92,6 +115,41 @@ subpaths so consumers depend on the smallest stable surface.
   or generated artifacts add build steps but support more consumers.
 - TypeScript project references can improve large builds, but a manually duplicated reference graph
   can drift from `package.json`. Treat workspace dependencies as the architectural truth.
+
+## Relationships
+
+- [A React app organized by feature](../frontend-feature-modules/) can consume contract packages while
+  keeping feature behavior, UI, and framework adapters local.
+- [A framework-independent TypeScript service](../typescript-hexagonal-service/) can translate shared
+  wire contracts at an inbound or outbound adapter boundary.
+- [One backend with strong module boundaries](../modular-monolith/) can expose contracts to other apps
+  without publishing its private module models or workflows.
+
+This pattern is for applications in the same TypeScript workspace. Multi-language or external
+consumers usually need a published protocol artifact and generated clients instead.
+
+## Full guide
+
+- **Structure:** [workspace package graph](structure/workspace-package-graph.md),
+  [contract package anatomy](structure/contract-package-anatomy.md),
+  [source of truth and runtime flow](structure/source-of-truth-and-runtime-flow.md),
+  [testing and release model](structure/testing-and-release-model.md)
+- **Rules:** [dependency direction](rules/dependency-direction.md),
+  [contract content](rules/contract-content.md),
+  [package public APIs](rules/package-public-apis.md),
+  [runtime validation](rules/runtime-validation.md),
+  [compatibility and ownership](rules/compatibility-and-ownership.md),
+  [graph enforcement](rules/graph-enforcement.md)
+- **Recipes:** [add a contract package](recipes/add-contract-package.md),
+  [add a contract](recipes/add-contract.md), [consume a contract](recipes/consume-contract.md),
+  [evolve a contract](recipes/evolve-contract.md),
+  [split a contract package](recipes/split-contract-package.md),
+  [enforce boundaries in CI](recipes/enforce-boundaries-in-ci.md)
+- **Decisions:** [use explicit contract packages](adrs/0001-use-explicit-contract-packages.md),
+  [share contracts, not business implementation](adrs/0002-share-contracts-not-business-implementation.md),
+  [validate untrusted values at runtime](adrs/0003-validate-untrusted-values-at-runtime.md),
+  [keep applications free of dependents](adrs/0004-keep-applications-free-of-dependents.md),
+  [select compilation by consumer needs](adrs/0005-select-compilation-by-consumer-needs.md)
 
 Start with [the workspace graph](structure/workspace-package-graph.md), then use the recipe for
 [adding a contract package](recipes/add-contract-package.md). Agents should begin with

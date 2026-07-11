@@ -1,4 +1,4 @@
-# Vertical slice use cases — agent router
+# Organize Backend Features by Use Case — agent router
 
 Read `patterns.yaml` first. Use its summaries to open only the document required by the current task.
 
@@ -15,8 +15,8 @@ Read `patterns.yaml` first. Use its summaries to open only the document required
   `recipes/add-transaction.md`.
 - Coordinating multiple operations: `structure/cross-slice-composition.md` and
   `recipes/compose-operations.md`.
-- Combining operation slices with a hexagonal service or modular monolith: the “Relationship to other
-  patterns” section in `README.md` and `structure/cross-slice-composition.md`.
+- Combining operation slices with a hexagonal service or modular monolith: the “Relationships”
+  section in `README.md` and `structure/cross-slice-composition.md`.
 - Sharing repeated code: `rules/shared-primitives.md` and `recipes/promote-shared-primitive.md`.
 - Choosing direct calls, commands, queries, or a dispatcher: `rules/invocation-and-cqrs.md` and
   `recipes/introduce-dispatcher.md`.

@@ -1,4 +1,4 @@
-# Frontend feature modules — agent router
+# Organize a React App by Feature — agent router
 
 Read `patterns.yaml` first. Use its summaries to open only the document required by the current task.
 
