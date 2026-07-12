@@ -1,0 +1,88 @@
+name: monorepo-shared-contracts
+title: Share Type-Safe Contracts Across Monorepo Apps
+version: 0.2.0
+description: Share validated TypeScript data contracts across workspace apps without coupling their business code or release timing.
+scope: shareable
+category: contracts
+targets:
+  - monorepo
+languages:
+  - typescript
+frameworks: []
+runtimes: []
+tags:
+  - monorepo
+  - workspaces
+  - shared-contracts
+  - runtime-validation
+  - schema-evolution
+aliases:
+  - shared contract packages
+  - shared data contracts
+  - TypeScript contract packages
+  - shared types package
+related:
+  - pattern: frontend-feature-modules
+    relationship: complements
+    why: A React app can consume shared contracts while keeping feature behavior and framework code local.
+  - pattern: typescript-hexagonal-service
+    relationship: complements
+    why: A service can translate shared wire contracts at an inbound or outbound adapter boundary.
+  - pattern: modular-monolith
+    relationship: complements
+    why: A modular backend can publish cross-application contracts without exposing module internals or business implementations.
+stack:
+  - typescript
+structure:
+  - path: structure/workspace-package-graph.md
+    is: The deployable applications with no package dependents, capability-sized contract packages, and allowed dependency directions in the workspace graph.
+  - path: structure/contract-package-anatomy.md
+    is: The files, exports, dependencies, and ownership metadata that form one contract package.
+  - path: structure/source-of-truth-and-runtime-flow.md
+    is: How authored schemas, inferred types, generated artifacts, and runtime validation move between producers and consumers.
+  - path: structure/testing-and-release-model.md
+    is: The checks and rollout model needed when applications build together but may deploy at different times.
+rules:
+  - path: rules/dependency-direction.md
+    enforces: Applications depend on contract packages, contract packages never depend on applications, and application-to-application dependencies are forbidden.
+  - path: rules/contract-content.md
+    enforces: Shared packages contain boundary vocabulary and validation rather than business workflows, infrastructure clients, or persistence models.
+  - path: rules/package-public-apis.md
+    enforces: Consumers use declared package exports and dependencies instead of source-relative paths, aliases, or undeclared hoisted packages.
+  - path: rules/runtime-validation.md
+    enforces: Untrusted values are parsed at system boundaries and runtime schemas remain synchronized with TypeScript types.
+  - path: rules/compatibility-and-ownership.md
+    enforces: Each contract has an owner, compatibility policy, and staged process for changes across independently deployed consumers.
+  - path: rules/graph-enforcement.md
+    enforces: CI verifies the workspace dependency graph, package exports, forbidden imports, cycles, and affected consumer checks.
+recipes:
+  - path: recipes/add-contract-package.md
+    when: Several applications need a new cohesive family of shared contracts.
+  - path: recipes/add-contract.md
+    when: A new operation, message, event, or value belongs in an existing contract package.
+  - path: recipes/consume-contract.md
+    when: An application begins producing or consuming an existing shared contract.
+  - path: recipes/evolve-contract.md
+    when: A deployed contract must change without assuming every application updates simultaneously.
+  - path: recipes/split-contract-package.md
+    when: A broad contract package has acquired unrelated owners, consumers, or release pressures.
+  - path: recipes/enforce-boundaries-in-ci.md
+    when: Workspace graph and import constraints need deterministic enforcement.
+adrs:
+  - path: adrs/0001-use-explicit-contract-packages.md
+    decides: Cross-application contracts live in named workspace packages instead of application folders, root aliases, or a global shared-types bucket.
+  - path: adrs/0002-share-contracts-not-business-implementation.md
+    decides: Contract packages share boundary vocabulary and validation only; applications retain their business behavior and adapters.
+  - path: adrs/0003-validate-untrusted-values-at-runtime.md
+    decides: Runtime-capable contracts parse data at trust boundaries while TypeScript types are derived from the same source of truth.
+  - path: adrs/0004-keep-applications-free-of-dependents.md
+    decides: Deployable applications may depend on libraries but never become dependencies of other applications or libraries.
+  - path: adrs/0005-select-compilation-by-consumer-needs.md
+    decides: Each contract package deliberately chooses source, compiled, or generated distribution without creating a second architecture graph in TypeScript configuration.
+boundaries:
+  - from: "**/packages/contracts-*/**"
+    to: "**/apps/*/**"
+    why: No scanned code in a contract package, including tests and scripts, may import a producing or consuming application.
+isolations:
+  - within: "apps/*/**"
+    why: Applications never import other applications; they collaborate only through contract packages.

@@ -1,0 +1,128 @@
+name: swappable-repository-adapters
+title: Replace Database Adapters Safely
+version: 0.2.0
+description: Change databases without rewriting business logic, using focused interfaces, shared behavior tests, and a reversible migration.
+scope: shareable
+category: persistence
+targets:
+  - backend-application
+  - persistence-layer
+languages:
+  - typescript
+frameworks: []
+runtimes:
+  - node
+tags:
+  - backend
+  - persistence
+  - database-adapters
+  - repository-pattern
+  - contract-testing
+  - data-migration
+  - rollback
+aliases:
+  - repository pattern
+  - persistence port
+  - repository adapters
+related:
+  - pattern: typescript-hexagonal-service
+    relationship: specializes
+    why: This pattern applies an application-owned outbound port and adapter boundary specifically to persistence.
+  - pattern: vertical-slice-use-case
+    relationship: composes-with
+    why: A slice can own a focused persistence interface when its data boundary needs isolation or replacement.
+  - pattern: modular-monolith
+    relationship: composes-with
+    why: A capability module can keep its repository port, adapters, migrations, and data ownership inside its boundary.
+stack:
+  - typescript
+  - node
+structure:
+  - path: structure/capability-and-adapter-shape.md
+    is: The local dependency shape for one persistence capability, its port, mappers, adapters, tests, and composition.
+  - path: structure/runtime-and-dependency-flow.md
+    is: How dependencies point toward the consumer, which canonical layouts the manifest enforces, and which imports need project-specific checks.
+  - path: structure/contract-and-conformance.md
+    is: The observable behavior that makes repository adapters substitutes rather than merely type-compatible.
+  - path: structure/migration-lifecycle.md
+    is: The W0/Wf watermarks, data states, authority changes, verification gates, and rollback conditions of a lossless persistence replacement.
+  - path: structure/testing-layers.md
+    is: The responsibilities of use-case, shared contract, adapter integration, migration, and end-to-end tests.
+rules:
+  - path: rules/port-semantics.md
+    enforces: A repository port is consumer-owned, capability-specific, and explicit about persistence semantics and failures.
+  - path: rules/model-mapping.md
+    enforces: Application values and storage records are translated by adapter-local mappers without vendor-type leakage.
+  - path: rules/adapter-isolation.md
+    enforces: Each adapter implements the port independently, selection remains outside policy, and unenforceable imports receive explicit project checks.
+  - path: rules/contract-testing.md
+    enforces: Every claimed substitute runs the same observable behavior suite against a representative backing resource.
+  - path: rules/consistency-and-transactions.md
+    enforces: Atomicity, concurrency, ordering, and visibility guarantees are stated by the port and honored by every adapter.
+  - path: rules/cutover-and-authority.md
+    enforces: A migration identifies one authority, anchors backfill at W0, catches up exactly through fenced watermark Wf, and proves rollback data safety.
+recipes:
+  - path: recipes/introduce-a-persistence-port.md
+    when: Existing application code is coupled directly to one persistence technology and a replacement seam is justified.
+  - path: recipes/add-a-repository-adapter.md
+    when: A new storage implementation must satisfy an existing persistence capability.
+  - path: recipes/build-the-contract-suite.md
+    when: The repository semantics need executable evidence shared by all adapters.
+  - path: recipes/migrate-and-cut-over.md
+    when: Data and traffic must move from the current adapter to a compatible candidate without gaps between backfill, replay, and authority transfer.
+  - path: recipes/roll-back-an-adapter.md
+    when: The candidate must be withdrawn during the stabilization window without losing acknowledged writes.
+  - path: recipes/retire-an-adapter.md
+    when: The candidate is stable and the previous store, synchronization path, and migration controls can be removed.
+adrs:
+  - path: adrs/0001-own-a-narrow-persistence-port.md
+    decides: The consuming application owns one capability-specific repository contract rather than a universal generic repository.
+  - path: adrs/0002-keep-mappers-inside-adapters.md
+    decides: Every storage implementation owns translation between application values and its persistence records.
+  - path: adrs/0003-prove-substitution-with-a-shared-contract.md
+    decides: Behavioral conformance tests, not TypeScript assignability alone, establish adapter substitutability.
+  - path: adrs/0004-maintain-one-authoritative-writer.md
+    decides: Persistence migration uses one authority plus W0/Wf-qualified durable synchronization instead of uncoordinated dual writes or lag-only cutover.
+boundaries:
+  - from: "**/src/application/**"
+    to: "**/src/persistence/**"
+    why: Application policy owns the repository port and must not import its concrete adapters, records, clients, or migrations.
+  - from: "**/src/application/**"
+    to: "**/src/modules/*/persistence/**"
+    why: Root application policy must not bypass a module-owned port to import concrete persistence.
+  - from: "**/src/modules/*/application/**"
+    to: "**/src/persistence/**"
+    why: Module application policy must not import concrete persistence from a root infrastructure area.
+  - from: "**/src/modules/*/application/**"
+    to: "**/src/modules/*/persistence/**"
+    why: Module application policy owns its port and must not import any module's concrete persistence.
+  - from: "**/src/application/**"
+    to: "**/src/bootstrap/**"
+    why: Application code must not select or locate the concrete persistence implementation.
+  - from: "**/src/application/**"
+    to: "**/src/modules/*/bootstrap/**"
+    why: Root application code must not depend on module composition code.
+  - from: "**/src/modules/*/application/**"
+    to: "**/src/bootstrap/**"
+    why: Module application code must not depend on root composition code.
+  - from: "**/src/modules/*/application/**"
+    to: "**/src/modules/*/bootstrap/**"
+    why: Module application code must not select concrete dependencies through module composition code.
+  - from: "**/src/persistence/**"
+    to: "**/src/bootstrap/**"
+    why: Persistence adapters are selected by composition code and do not control their own runtime selection.
+  - from: "**/src/persistence/**"
+    to: "**/src/modules/*/bootstrap/**"
+    why: Root persistence adapters must not depend on module composition code.
+  - from: "**/src/modules/*/persistence/**"
+    to: "**/src/bootstrap/**"
+    why: Module persistence adapters are selected by root composition code and must not import it.
+  - from: "**/src/modules/*/persistence/**"
+    to: "**/src/modules/*/bootstrap/**"
+    why: Module persistence adapters are selected by composition code and do not control selection.
+  - from: "**/src/persistence/**"
+    to: "**/src/modules/*/persistence/**"
+    why: Root persistence infrastructure must not reach into a module's persistence internals; module data stays module-owned.
+isolations:
+  - within: "**/persistence/adapters/*/**"
+    why: Sibling repository adapters must stay independent; no import may cross from one adapter directory into another.

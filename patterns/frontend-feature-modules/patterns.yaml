@@ -1,0 +1,87 @@
+name: frontend-feature-modules
+title: Organize a React App by Feature
+version: 0.2.0
+description: Keep each user-facing React feature's UI, state, data access, and tests together behind a clear public API.
+scope: shareable
+category: code-organization
+targets:
+  - frontend-application
+languages:
+  - typescript
+frameworks:
+  - react
+runtimes:
+  - browser
+tags:
+  - frontend
+  - feature-first
+  - feature-modules
+  - public-api
+  - import-boundaries
+  - colocation
+aliases:
+  - frontend feature modules
+  - feature-based React architecture
+  - feature folders
+related:
+  - pattern: vertical-slice-use-case
+    relationship: complements
+    why: Both organize code by independently changing outcomes, one in a React UI and one in backend operations.
+  - pattern: monorepo-shared-contracts
+    relationship: complements
+    why: A feature-organized React app can consume shared cross-application contracts without importing another app.
+stack:
+  - typescript
+  - react
+structure:
+  - path: structure/layers.md
+    is: The app, features, and shared layers and the responsibilities owned by each one.
+  - path: structure/feature-anatomy.md
+    is: The optional internal segments of a feature and how code is colocated around one capability.
+  - path: structure/public-apis.md
+    is: How feature entry points keep internals private and give composition code a stable surface.
+rules:
+  - path: rules/dependency-direction.md
+    enforces: Dependencies flow from app to features to shared, with no upward or lateral feature imports.
+  - path: rules/ownership-and-placement.md
+    enforces: Code is placed with the capability that owns its reason to change.
+  - path: rules/shared-code.md
+    enforces: Shared contains proven cross-feature primitives rather than speculative or business-specific utilities.
+  - path: rules/testing.md
+    enforces: Tests stay near their owner and verify features through public behavior instead of private structure.
+recipes:
+  - path: recipes/add-feature.md
+    when: A new user-visible capability needs its own frontend module.
+  - path: recipes/expose-feature-capability.md
+    when: Composition code needs to render or invoke behavior owned by a feature.
+  - path: recipes/compose-features.md
+    when: One route or workflow needs capabilities owned by more than one feature.
+  - path: recipes/promote-shared-code.md
+    when: A domain-agnostic primitive has multiple consumers or an explicitly owned cross-feature contract.
+  - path: recipes/enforce-boundaries.md
+    when: Import boundaries are introduced or path aliases and module layouts change.
+adrs:
+  - path: adrs/0001-organize-by-capability.md
+    decides: The primary unit of organization is a user-facing capability rather than a technical file type.
+  - path: adrs/0002-enforce-one-way-layers.md
+    decides: Layer direction and feature isolation use complementary deterministic checks instead of developer memory.
+  - path: adrs/0003-use-explicit-entry-files.md
+    decides: Each feature exposes small named entry files while keeping its internal directory private.
+boundaries:
+  - from: "**/src/shared/**"
+    to: "**/src/features/**"
+    why: Shared primitives must remain independent of business capabilities.
+  - from: "**/src/shared/**"
+    to: "**/src/app/**"
+    why: Reusable primitives must not depend on application composition.
+  - from: "**/src/features/**"
+    to: "**/src/app/**"
+    why: Features are composed by the app layer and must not reach back into it.
+  - from: "**/src/app/**"
+    to: "**/src/features/*/internal/**"
+    why: Application composition consumes explicit feature entry files rather than private implementation.
+isolations:
+  - within: "src/features/*/**"
+    why: Features must not import one another; the app layer composes them.
+  - within: "**/src/features/*/**"
+    why: Feature isolation also holds under nested application roots.
