@@ -4,6 +4,8 @@ Dependencies inside a slice point away from volatile edges and toward its operat
 policy.
 
 - Transport may import the contract, validation, and callable handler surface.
+- Validation may import the contract and stable shared primitives; it does not import the transport,
+  handler, ports, or concrete adapters.
 - Handler may import its contract, ports, local policy, and stable shared primitives.
 - Concrete adapters may import the ports they implement and local mapping code.
 - Transport does not import concrete outbound adapters.
@@ -26,9 +28,8 @@ internals, and those callable surfaces do not become general cross-slice APIs. B
 that adapter but does not contain its mapping or policy.
 
 When several roles remain in one file, an import graph cannot prove their internal separation. Split
-the roles when deterministic enforcement is worth the navigation. Register process-wide adapter roots
-and noncanonical policy files with the resolver-aware checker instead of assuming the manifest can
-infer their meaning from arbitrary names.
+the roles when deterministic enforcement is worth the navigation. What the manifest checks and what
+needs resolver-aware tooling is defined in `recipes/enforce-boundaries.md`.
 
 These rules do not recreate global horizontal layers. They preserve a small policy-versus-edge seam
 inside each cohesive operation while allowing different slices to choose different internal designs.

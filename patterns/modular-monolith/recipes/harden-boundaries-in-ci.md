@@ -12,10 +12,13 @@
 5. Add a positive fixture for an allowed internal import and public module call inside one root.
 6. Add negative fixtures for cross-module internals, forbidden layer edges, and equal module slugs in
    two deployable roots.
-7. Run `patterns check --include-tests` for the generic manifest boundaries and the module-aware
-   architecture suite for identity comparisons.
+7. Run `patterns check --include-tests`: the manifest boundaries verify host, layer, and shared rules,
+   and the manifest isolation rejects cross-module internal imports within one root. Keep the
+   module-aware architecture suite for root-qualified identity (equal slugs across deployable roots)
+   and for entry-point-only enforcement of `contracts/` and `register.ts`.
 8. Add database access checks or SQL review when logical data ownership needs enforcement.
 9. Make the checks required in CI before protecting the main branch.
 
 Do not use `src/modules/** -> src/modules/**` as a generic prohibition: it also rejects valid imports
-inside one module. The enforcement must compare root-qualified source and target module identities.
+inside one module. Root-qualified identity comparison still requires the dedicated suite; the manifest
+isolation covers sibling internals within one root.

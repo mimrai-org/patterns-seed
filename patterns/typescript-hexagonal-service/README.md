@@ -4,7 +4,7 @@
 >
 > **Pattern ID:** `typescript-hexagonal-service` · **Version:** `0.2.0`
 >
-> **Category:** Service architecture · **Target:** Backend service
+> **Category:** System architecture · **Target:** Backend application
 >
 > **Language:** TypeScript · **Framework:** Independent · **Runtime:** Node.js
 
@@ -59,7 +59,7 @@ src/
 ├── domain/                  pure business concepts and invariants
 ├── application/
 │   ├── use-cases/           application outcomes and orchestration
-│   └── ports/               outbound capabilities required by use cases
+│   └── ports/               shared outbound capabilities (a single-consumer port lives beside its use case)
 ├── adapters/
 │   ├── inbound/             HTTP, message, schedule, CLI, or test drivers
 │   └── outbound/            persistence, messaging, clock, identity, or provider drivers
@@ -112,6 +112,8 @@ Keep a small use case flat. Add subdirectories only when several files share a c
   deployment boundary. Individual modules can apply this pattern internally.
 - [Replace database adapters safely](../swappable-repository-adapters/) specializes the outbound
   adapter idea for persistence, behavioral conformance, and reversible migration.
+- [Share type-safe contracts across monorepo apps](../monorepo-shared-contracts/) supplies the cross-application
+  wire contracts that this service translates at its inbound and outbound adapter boundaries.
 
 These relationships are optional composition choices, not a requirement to introduce every layer in
 every use case.

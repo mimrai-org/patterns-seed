@@ -13,6 +13,7 @@ frameworks: []
 runtimes:
   - node
 tags:
+  - backend
   - persistence
   - database-adapters
   - repository-pattern
@@ -20,8 +21,9 @@ tags:
   - data-migration
   - rollback
 aliases:
-  - replaceable persistence adapters
-  - repository port
+  - repository pattern
+  - persistence port
+  - repository adapters
 related:
   - pattern: typescript-hexagonal-service
     relationship: specializes
@@ -118,3 +120,9 @@ boundaries:
   - from: "**/src/modules/*/persistence/**"
     to: "**/src/modules/*/bootstrap/**"
     why: Module persistence adapters are selected by composition code and do not control selection.
+  - from: "**/src/persistence/**"
+    to: "**/src/modules/*/persistence/**"
+    why: Root persistence infrastructure must not reach into a module's persistence internals; module data stays module-owned.
+isolations:
+  - within: "**/persistence/adapters/*/**"
+    why: Sibling repository adapters must stay independent; no import may cross from one adapter directory into another.

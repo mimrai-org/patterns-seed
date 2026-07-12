@@ -1,12 +1,16 @@
 # Enforce import boundaries
 
-Use two complementary checks; the manifest glob model cannot express the whole feature-identity rule.
+Use two complementary checks; the manifest covers layer edges and slug-level feature isolation, while
+root-qualified feature identity needs a module-aware rule.
 
-1. Run `patterns check --include-tests` to enforce the declared `app`, `features`, `shared`, and private
-   `internal/` layer edges.
+1. Run `patterns check --include-tests` to enforce the declared layer boundaries, private `internal/`
+   edges, and the `isolations` rule that rejects imports between distinct features.
 2. Configure a resolver-aware module rule that captures both the normalized architecture root and
    `<feature>` from `<root>/src/features/<feature>/**`. In a workspace, use the owning package or
-   application plus its `src` path as `<root>`; a feature name alone is not globally unique.
+   application plus its `src` path as `<root>`; a feature name alone is not globally unique. Typical
+   implementations: eslint-plugin-boundaries with element types capturing `<root>` and `<feature>`, a
+   dependency-cruiser forbidden rule with capture groups, or an architecture test over the resolved
+   import graph; plain `no-restricted-imports` suffices only for the `internal/**` rejection.
 3. Allow code inside feature A to import A's internals and `shared` only when both paths belong to the
    same architecture root.
 4. Reject imports when feature names differ or roots differ, including the same feature slug under two
@@ -20,5 +24,8 @@ Use two complementary checks; the manifest glob model cannot express the whole f
    feature slug in two different roots.
 9. Run both checks in CI and update their path classification whenever aliases or source roots change.
 
-Do not declare `features/** → features/**` as a blanket forbidden glob: it also rejects legitimate
-imports within one feature. The module-aware check must compare root-qualified feature identities.
+Do not declare `features/** → features/**` as a forbidden boundary glob: it also rejects legitimate
+imports within one feature. Declare it as an `isolations` rule instead (`within: "src/features/*/**"`),
+which compares captured feature identities. The module-aware check remains necessary for
+root-qualified identity: the manifest isolation treats equal slugs in different roots as the same
+feature.

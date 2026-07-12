@@ -17,10 +17,10 @@ remain invisible to consumers, and exported types should not leak vendor respons
 state shapes.
 
 Enforce the contract with import restrictions that allow named root files but reject `internal/**`
-from outside that feature. Because the `patterns` boundary glob cannot compare two wildcard identities,
-cross-feature private imports also need a module-aware linter or architecture test. In a monorepo, that
-identity is the pair `<architecture root, feature>` so equal slugs in different applications remain
-different owners.
+from outside that feature. Boundary globs cannot compare two wildcard identities, so cross-feature
+imports are declared as a manifest `isolations` rule; a module-aware linter or architecture test is
+still required to qualify identity by architecture root (in a monorepo the identity is the pair
+`<architecture root, feature>`, so equal slugs in different applications remain different owners).
 
 When public entries grow into unrelated groups, the feature may contain more than one capability.
 When two features repeatedly need the same business behavior, do not move that behavior to `shared`;

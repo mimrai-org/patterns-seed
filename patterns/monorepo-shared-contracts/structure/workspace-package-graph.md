@@ -51,6 +51,7 @@ boundary.
 
 The manifest boundary catches resolved imports from any scanned file under `**/packages/contracts-*`
 into any scanned file under `**/apps/*`, including discovered tests when `--include-tests` is enabled.
-It cannot inspect an unresolved import, a package-manifest-only edge, ignored build output, or compare
-two wildcard application identities. A workspace-graph and resolver-aware assertion must separately
-cover those cases and reject app-to-app edges and cycles.
+It cannot inspect an unresolved import, a package-manifest-only edge, or ignored build output. The
+manifest's isolation rule (`within: apps/*/**`) separately rejects resolved imports between two
+different applications. A workspace-graph and resolver-aware assertion must still cover
+manifest-declared edges, dynamic imports, and cycles.

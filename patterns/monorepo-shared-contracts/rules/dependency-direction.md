@@ -31,6 +31,10 @@ scanner instead of limiting enforcement to `src/`. The checker observes only sup
 resolved imports; package-manifest edges, unresolved or dynamic imports, and ignored generated output
 still require graph-aware and resolver-aware controls.
 
-The manifest intentionally does not declare `apps/* → apps/*`: that glob would also reject valid
-imports within one application because it cannot compare wildcard identities. A package-graph rule
-must classify application packages and reject edges between different application identities.
+A from→to glob cannot express the app-to-app rule without also rejecting imports inside one
+application, so the manifest declares it as an isolation instead: `within: apps/*/**` captures each
+application's identity and rejects any resolved import between two different applications while
+allowing same-application imports. Like the boundary rule, it observes only files the scanner
+resolves; package-manifest-only edges, unresolved or dynamic imports, and ignored generated output
+still require the graph-aware check, which must also classify packages and reject application
+dependents wherever they are declared.

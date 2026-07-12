@@ -25,9 +25,9 @@ CI should inspect resolved imports and fail when:
 - The module graph contains a cycle.
 - Shared code imports a module.
 
-The `patterns.yaml` boundaries enforce the layer and host rules its glob model can express. A separate
-architecture test must compare root-qualified source and target module identities to distinguish
-legitimate internal imports from forbidden cross-module deep imports. In a monorepo, two modules with
-the same directory name under different deployable roots are still different owners and must not import
-each other's source. Data ownership needs database permissions, SQL analysis, or integration tests; an
-import graph cannot prove it.
+The `patterns.yaml` boundaries enforce the layer and host rules, and its `isolations` rule rejects
+cross-module `internal` imports within one source tree. A separate architecture test must still compare
+root-qualified module identities: in a monorepo, two modules with the same directory name under
+different deployable roots are different owners, and deep imports of `contracts/` or `register.ts` from
+another module's non-internal files also need the test. Data ownership needs database permissions, SQL
+analysis, or integration tests; an import graph cannot prove it.

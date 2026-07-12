@@ -27,7 +27,7 @@ Read `patterns.yaml` first. Use its summaries to open only the document required
 - Update import-boundary configuration when paths or layers change.
 
 Before finishing, run the repository's typecheck, tests, module-aware import checks, and
-`patterns check --include-tests` when available. The manifest checker covers layer direction and
-`app → internal`; the module-aware check must distinguish root-qualified feature identities, including
-same-slug features in different applications, from valid same-feature imports. A passing unit test does
-not excuse a forbidden dependency.
+`patterns check --include-tests` when available. The manifest checker covers layer direction,
+`app → internal`, and cross-feature imports via `isolations`; the module-aware check must additionally
+distinguish root-qualified feature identities (same-slug features in different applications) and
+resolver-level import forms. A passing unit test does not excuse a forbidden dependency.

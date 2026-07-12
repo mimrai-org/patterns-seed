@@ -10,8 +10,10 @@ compatibility.
    reject source-relative cross-package paths and alias or deep-import bypasses.
 4. Run `patterns check --include-tests` to reject resolved imports from scanned contract-package code,
    including discovered tests, into scanned application code.
-5. Add a resolver-aware import check for ordinary imports, re-exports, dynamic imports, generated code,
-   and tests. Compare package identities rather than forbidding `apps/** → apps/**` as a blanket glob.
+5. Add a resolver-aware import check for re-exports, dynamic imports, generated code, and tests. The
+   manifest isolation (`within: apps/*/**`) already compares application identities for resolved
+   imports; the resolver-aware check covers the forms the scanner cannot see and compares package
+   identities rather than forbidding `apps/** → apps/**` as a blanket glob.
 6. Add positive fixtures for app → contract, same-app, and same-package imports.
 7. Add negative fixtures for contract source → app source, contract test → app source, contract source
    → app test, app A → app B, undeclared dependency, private subpath, and a contract cycle.

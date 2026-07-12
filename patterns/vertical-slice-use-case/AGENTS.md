@@ -1,4 +1,4 @@
-# Organize Backend Features by Use Case — agent router
+# Organize Backend Operations by Use Case — agent router
 
 Read `patterns.yaml` first. Use its summaries to open only the document required by the current task.
 
@@ -38,10 +38,11 @@ Read `patterns.yaml` first. Use its summaries to open only the document required
 - Promote only proven stable, domain-neutral primitives to `shared`.
 - Keep bootstrap limited to construction and wiring. Contract translation or workflow policy belongs
   in a workflow-owned adapter at an explicit outer composition edge.
-- Keep boundaries honest: manifest globs protect named role files below any `operations/<operation>`
-  root, but cannot compare root-qualified slice identities, inspect mixed concerns inside one file, or
-  discover process-wide adapter paths. Equal slugs under different modules or applications remain
-  different slices. Retain resolver-aware isolation and semantic lint or architecture rules.
+- Keep boundaries honest: the manifest's isolation rule enforces sibling-slice isolation by operation
+  name and its globs protect named role files below any `operations/<operation>` root. Its blind spot
+  is equal operation slugs under two different `operations/` roots — those are different slices but
+  capture the same identity. Retain resolver-aware checks for that case, aliases, re-exports, dynamic
+  imports, and mixed concerns inside one file; see `recipes/enforce-boundaries.md`.
 
 Before finishing, run the repository's typecheck, behavior tests, adapter integration tests,
 resolver-aware dependency checks, cycle detection, and `patterns check --include-tests` when

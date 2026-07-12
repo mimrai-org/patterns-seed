@@ -16,6 +16,10 @@ application outcome and meaningful interactions, not private method order.
 
 Define observable examples every implementation of a port must satisfy. Run the same suite against an
 in-memory adapter and each production adapter. Contract tests make substitutability evidence-based.
+Keep in-memory and recording port implementations used by use-case tests beside those tests under
+`src/application`; when an in-memory implementation is a real deliverable under `src/adapters`, its own
+test file imports the shared contract suite (never the reverse), so the import direction stays inward
+and `patterns check --include-tests` passes.
 
 ## Adapter integration tests
 

@@ -28,11 +28,13 @@ Read `patterns.yaml` first. Use its summaries to open only the document required
 - Add every internal dependency to the consuming package manifest and expose only declared exports.
 - Treat independent deployment as a compatibility problem even when compilation is atomic.
 
-Before finishing, run the package manager's frozen install check, contract package tests, the
-cross-version reader matrix, affected consumer typechecks/builds, the workspace graph policy, cycle
-detection, resolver-aware import rules, and `patterns check --include-tests` when available. The
-manifest boundary catches resolved imports from scanned contract-package code, including discovered
-tests, into scanned application code. A graph-aware check must additionally compare package identities
-and inspect dependency manifests, unresolved or dynamic imports, ignored generated output, and other
-files the import scanner cannot prove. It rejects app-to-app edges, contract cycles, undeclared
-dependencies, deep imports, and violations outside the manifest check's observable graph.
+Before finishing, always run the package manager's frozen install check, the workspace graph policy,
+cycle detection, resolver-aware import rules, and `patterns check --include-tests` when available.
+When contract source, schema, or parser behavior changed, additionally run the contract package
+tests, the cross-version reader matrix, and affected consumer typechecks/builds. The manifest catches
+resolved contract-package → application imports, and its isolation rule catches resolved imports
+between two different applications, including discovered tests. A graph-aware check must additionally
+compare package identities and inspect dependency manifests, unresolved or dynamic imports, ignored
+generated output, and other files the import scanner cannot prove. It rejects package-manifest
+app-to-app edges, contract cycles, undeclared dependencies, deep imports, and violations outside the
+manifest check's observable graph.

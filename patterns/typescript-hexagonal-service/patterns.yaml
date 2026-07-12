@@ -3,9 +3,9 @@ title: Build a Framework-Independent TypeScript Service
 version: 0.2.0
 description: Keep TypeScript business logic independent from HTTP frameworks, databases, queues, and external providers.
 scope: shareable
-category: service-architecture
+category: system-architecture
 targets:
-  - backend-service
+  - backend-application
 languages:
   - typescript
 frameworks: []
@@ -17,12 +17,13 @@ tags:
   - ports-and-adapters
   - dependency-inversion
   - framework-independent
+  - clean-architecture
 aliases:
   - hexagonal architecture
   - ports and adapters
 related:
   - pattern: vertical-slice-use-case
-    relationship: complements
+    relationship: composes-with
     why: Vertical slices choose the unit of change while hexagonal boundaries separate application policy from technology.
   - pattern: modular-monolith
     relationship: composes-with
@@ -30,6 +31,9 @@ related:
   - pattern: swappable-repository-adapters
     relationship: complements
     why: Replaceable repository adapters apply the outbound adapter idea specifically to persistence and migration.
+  - pattern: monorepo-shared-contracts
+    relationship: complements
+    why: Shared cross-application wire contracts are translated at this service's inbound and outbound adapter boundaries.
 stack:
   - typescript
   - node

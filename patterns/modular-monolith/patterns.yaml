@@ -14,11 +14,13 @@ runtimes:
 tags:
   - backend
   - modular-monolith
+  - monolith
   - single-deployable
   - capability-modules
   - data-ownership
 aliases:
   - modular monolith
+  - modulith
   - capability-based backend
 related:
   - pattern: vertical-slice-use-case
@@ -30,6 +32,9 @@ related:
   - pattern: monorepo-shared-contracts
     relationship: complements
     why: Shared contract packages can connect this deployable to other applications without exposing module internals.
+  - pattern: swappable-repository-adapters
+    relationship: composes-with
+    why: A module that owns its data can place its repository port, adapters, and migrations behind a replaceable persistence seam inside the module boundary.
 stack:
   - typescript
   - node
@@ -115,3 +120,6 @@ boundaries:
   - from: "**/src/shared/**"
     to: "**/src/host/**"
     why: Shared primitives must remain independent from application assembly.
+isolations:
+  - within: "src/modules/*/internal/**"
+    why: Module internals are private; siblings collaborate only through public entry points.

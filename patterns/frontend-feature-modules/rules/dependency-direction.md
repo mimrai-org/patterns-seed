@@ -5,10 +5,10 @@ module-boundary rules, or an equivalent architecture test.
 
 The enforcement must reject:
 
-- Any import from `shared` into `features` or `app`.
-- Any import from a feature into `app`.
-- Any direct import from one feature into another feature.
-- Any import into a feature's `internal/` directory from outside that feature.
+- Code in `shared` importing anything from `features` or `app`.
+- Code in a feature importing `app`.
+- Code in one feature importing another feature.
+- Code outside a feature importing that feature's `internal/` directory.
 
 Application composition may import named files at a feature root. Code inside a feature may use
 relative imports within that same feature and public imports from `shared`.
@@ -19,10 +19,10 @@ exception: move orchestration upward, pass a callback or value downward, or extr
 domain-agnostic primitive.
 
 The manifest boundaries check layer direction and prevent `app` from reaching `internal/`, including in
-nested `src` roots. They cannot compare wildcard identities or prove that two matched paths belong to
-the same root. A module-aware linter or architecture test must use the pair
-`<normalized architecture root, feature>`: allow imports inside feature A only within its root, reject
-A → B, and reject same-slug feature imports between applications or workspace packages.
+nested `src` roots. The manifest `isolations` rule rejects imports between different feature
+identities, but its identity is the feature slug alone; the module-aware check must additionally
+qualify identity by architecture root so equal slugs in different applications stay distinct, and must
+cover aliases, re-exports, `require`, and dynamic `import()`.
 
 Use resolver-aware enforcement that covers aliases, re-exports, `require`, and dynamic `import()` as
 well as ordinary static imports. Run it on source and tests, and run `patterns check --include-tests`.

@@ -24,6 +24,35 @@ The complete operation owns these responsibilities:
   do not hide mapping or policy inside bootstrap.
 - `tests/` verifies the same observable outcome and the boundaries that can fail independently.
 
+A minimal, domain-neutral shape for these roles:
+
+```ts
+// contract.ts — typed input, result, and expected failures; no thrown business errors
+export type RegisterItemInput = { name: string; ownerId: string };
+export type RegisterItemResult = { itemId: string };
+export type RegisterItemFailure = { kind: "duplicate-name" } | { kind: "owner-not-found" };
+
+// ports.ts — one narrow capability the handler consumes
+export interface ItemStore {
+  findOwner(ownerId: string): Promise<{ id: string } | null>;
+  insertItem(item: { name: string; ownerId: string }): Promise<{ itemId: string } | "duplicate">;
+}
+
+// handler.ts — a factory receives ports and returns the executable use case
+export const makeRegisterItem =
+  (ports: { store: ItemStore }) =>
+  async (input: RegisterItemInput): Promise<RegisterItemResult | RegisterItemFailure> => {
+    const owner = await ports.store.findOwner(input.ownerId);
+    if (!owner) return { kind: "owner-not-found" };
+    const inserted = await ports.store.insertItem(input);
+    if (inserted === "duplicate") return { kind: "duplicate-name" };
+    return { itemId: inserted.itemId };
+  };
+```
+
+Expected failures are values in the contract; thrown errors are reserved for unexpected faults. A
+port may equally be a single function type when one capability suffices.
+
 These are responsibilities, not a required class hierarchy. Keep a small operation in one or two
 files until navigation or independent testing warrants a split. Conversely, an operation with rich
 policy may contain a local domain model, policies, mapping, and several adapters; that complexity

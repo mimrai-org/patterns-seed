@@ -49,7 +49,9 @@ Keep fixtures as serialized, synthetic boundary values rather than application m
 producer helpers. Fixtures used only by the package remain private under `tests/`. When multiple
 consumer test suites deliberately share a corpus, expose a narrow `./testing/<contract>` subpath and
 do not re-export it from a production entry. A consumer must never deep-import `tests/` to bypass the
-package's public surface.
+package's public surface. The export may resolve to files under `tests/` or a dedicated `src/testing/`
+folder; what matters is that consumers reach the corpus only through the declared subpath, never by
+filesystem path into `tests/`.
 
 Record how CI obtains the previous supported reader: a published package version, immutable build
 artifact, release tag, or pinned consumer commit. Rebuilding old source against the candidate package

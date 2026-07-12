@@ -1,16 +1,17 @@
 # Enforce boundaries
 
-1. Classify `bootstrap`, `shared`, every `operations/<operation>` identity at any nesting depth, and
-   each configured process-wide adapter root with a resolver-aware dependency tool or architecture
-   test. Key a slice as `<normalized path to its owning operations root, operation>`; an operation slug
-   alone is not unique across applications or enclosing modules.
+1. Use the manifest's isolation rule (`within: "**/operations/*/**"`) for sibling-slice isolation: it
+   captures the operation name at any nesting depth and rejects any import edge between two different
+   operation names. Its one blind spot is equal operation slugs under two different `operations/`
+   roots — they capture the same identity, so that cross-module edge is a false negative.
 2. Use the manifest for the path edges it actually represents: shared-to-operation,
-   operation-to-bootstrap, and dependencies from canonical `handler.ts`, `transport.ts`, `contract.ts`,
-   and `ports.ts` files toward canonical transport or concrete-adapter paths.
-3. Add an identity-aware rule that rejects an edge when source and target have different owning roots
-   or operation names. This includes equal operation slugs under two modules or applications. Do not
-   encode `operations/** → operations/**` as a blanket prohibition because it would also reject valid
-   imports inside one slice.
+   shared-to-bootstrap, operation-to-bootstrap, and forbidden edges from canonical `handler.ts`,
+   `transport.ts`, `contract.ts`, `validation.ts`, and `ports.ts` files toward canonical transport or
+   concrete-adapter paths.
+3. Add a resolver-aware, identity-keyed rule for what the manifest cannot see: key a slice as
+   `<normalized path to its owning operations root, operation>` and reject equal operation slugs under
+   two modules or applications. Do not encode `operations/** → operations/**` as a blanket prohibition
+   because it would also reject valid imports inside one slice.
 4. Add repository rules for noncanonical policy files, vendor imports, and process-wide adapter roots.
    The manifest cannot infer architectural roles from arbitrary path names.
 5. Resolve TypeScript path aliases, package exports, re-exports, index files, dynamic imports, and the

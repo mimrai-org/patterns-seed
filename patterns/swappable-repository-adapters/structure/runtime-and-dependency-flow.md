@@ -26,10 +26,14 @@ policy. Changing the selected adapter should change bootstrap and infrastructure
 branch in a use case.
 
 Concrete adapters must not depend on one another. Shared low-level helpers may contain mechanical client
-setup or neutral encoding only when they import no adapter and define no capability semantics. Because the
-manifest glob model cannot distinguish a same-adapter import from a cross-adapter import, enforce sibling
-isolation with package entry points, import-path lint rules, or an architecture test that keys identity by
-both the owning `persistence/adapters` root and adapter directory.
+setup or neutral encoding only when they import no adapter and define no capability semantics. The
+manifest's adapter isolation rule distinguishes same-adapter from cross-adapter imports by capturing the
+adapter directory as an identity; `patterns check` fails any import that crosses sibling adapter
+directories. Because that identity is not root-qualified, equal adapter slugs under different owning roots
+still need package entry points, an import-path lint rule, or an architecture test keyed by both the
+owning `persistence/adapters` root and the adapter directory. Module-to-root persistence imports are
+intentionally left unconstrained: shared low-level helpers of the mechanical kind above may live at the
+root, while root persistence code is forbidden from reaching into module persistence internals.
 
 ## Executable boundary coverage
 
@@ -37,7 +41,9 @@ The manifest recognizes root roles under `src/application`, `src/persistence`, a
 the canonical modular roles `src/modules/<capability>/application`, `persistence`, and `bootstrap` where
 `<capability>` is one path segment. The leading glob also supports those shapes inside monorepo applications.
 It forbids root-to-module, module-to-root, and module-to-module policy leaks without matching the legitimate
-application-owned port at `application/persistence` as concrete infrastructure.
+application-owned port at `application/persistence` as concrete infrastructure. The manifest also isolates
+sibling adapter directories under any `persistence/adapters` root, failing imports that cross from one
+adapter into another.
 
 Those globs cannot infer equivalent roles under arbitrary names or deeper module identities, nor can they
 decide that equal slugs in different monorepo roots have different owners. Add a local house pattern,

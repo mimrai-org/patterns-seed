@@ -35,9 +35,10 @@ Read `patterns.yaml` first and open only the smallest indexed document needed fo
   `Wf` with no gaps or poison records. Never substitute a nonzero lag threshold for this gate.
 - Name the authoritative writer, synchronization direction, verification gate, and rollback data source for
   every migration stage.
-- The manifest covers root role paths and `src/modules/<capability>/...` with one capability segment. Add a
-  project-owned architecture or restricted-import rule for other layouts, root-qualify adapter identities
-  in a monorepo, and restrict direct ORM or driver imports.
+- The manifest covers root role paths, `src/modules/<capability>/...` with one capability segment, and
+  sibling-adapter isolation under any `persistence/adapters` root. Add a project-owned architecture or
+  restricted-import rule for other layouts, for equal adapter slugs under different owning roots (the
+  isolation identity is not root-qualified), and for direct ORM or driver imports.
 
 Before finishing, run typecheck, unit tests, contract tests, adapter integration tests, migration tests,
 architecture checks, and `patterns check --include-tests` when available. If a guarantee cannot be

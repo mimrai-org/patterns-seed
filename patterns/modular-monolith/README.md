@@ -28,10 +28,10 @@ small public API, owns its data, and is assembled by a thin host.
 ```text
                  one versioned deployable; all modules per instance
 ┌──────────────────────────────────────────────────────────────────┐
-│ host ──▶ module A public API     module B public API ◀── module A │
-│              │                           │                        │
-│          private internals           private internals            │
-│          module-owned data           module-owned data            │
+│ host ──▶ module A public API    module B public API ◀── module A │
+│              │                          │                        │
+│          private internals          private internals            │
+│          module-owned data          module-owned data            │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
@@ -70,8 +70,8 @@ src/
 └── shared/                       small domain-agnostic primitives
 ```
 
-Simple modules may remain flat behind the same public entry point. Internal layering grows only with
-real policy and external boundaries.
+Simple modules stay flat inside `internal/` behind the same public entry point. Internal layering grows
+only with real policy and external boundaries.
 
 ## Key rules
 
@@ -116,6 +116,8 @@ real policy and external boundaries.
   dependency direction inside one or more modules.
 - [Shared type-safe contracts](../monorepo-shared-contracts/) can connect this deployable to other
   workspace applications without exposing private module code.
+- [Replace database adapters safely](../swappable-repository-adapters/) can give a module's owned data
+  a replaceable persistence seam without leaking storage details past the module API.
 
 A modular monolith does not promise future microservice extraction. Independent deployment is a
 separate decision that requires genuinely independent contracts, data, runtime assumptions, and

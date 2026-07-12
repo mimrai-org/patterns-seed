@@ -1,6 +1,6 @@
 # Replace Database Adapters Safely
 
-> **Known as:** Repository adapters · Persistence ports
+> **Known as:** Repository pattern · Persistence port · Repository adapters
 >
 > **Pattern ID:** `swappable-repository-adapters` · **Version:** `0.2.0`
 >

@@ -1,4 +1,4 @@
-# Organize Backend Features by Use Case
+# Organize Backend Operations by Use Case
 
 > **Known as:** Vertical slice architecture · Use-case folders
 >
@@ -85,9 +85,9 @@ an operation with no external effect does not need an empty `ports.ts` or `adapt
 files when separate responsibilities become real, and keep the complete behavior under the operation
 owner.
 
-Manifest import checks apply when these responsibilities use the named canonical files. An import
-graph cannot inspect concern mixing inside one file. If deterministic separation becomes important,
-split the roles and register any process-wide adapter path with the repository's architecture checker.
+Manifest import checks apply when these responsibilities use the named canonical files. What the
+manifest checks and what still needs resolver-aware tooling is defined in
+[enforce boundaries](recipes/enforce-boundaries.md).
 
 ## Key rules
 
@@ -104,10 +104,11 @@ split the roles and register any process-wide adapter path with the repository's
 6. Cross-slice workflows receive an explicit coordinating owner and injected capabilities; repeated
    sibling imports are a signal to revisit the boundaries.
 7. Only stable, domain-neutral primitives with independent consumers move to `shared`.
-8. Manifest globs protect canonical role files under any `operations/<operation>` root. Resolver-aware
-   checks compare `<owning operations root, operation>` identities and classify noncanonical files and
-   process-wide adapters.
-   Concern mixing inside a one-file slice remains a testing and review responsibility.
+8. The manifest enforces sibling-slice isolation by operation name and protects canonical role files
+   under any `operations/<operation>` root. Its one blind spot is two operations with the same name
+   under different `operations/` roots; that case, plus aliases, re-exports, dynamic imports, and
+   concern mixing inside a one-file slice, is covered in
+   [enforce boundaries](recipes/enforce-boundaries.md).
 
 ## Relationships
 
@@ -123,6 +124,9 @@ deployment boundary or require a service-wide layer hierarchy.
   `operations/<operation>`; the module still owns cross-capability APIs, registration, and data rules.
 - [A React app organized by feature](../frontend-feature-modules/) applies the same change-together
   principle to user-facing UI capabilities rather than backend operations.
+- [Replace database adapters safely](../swappable-repository-adapters/) grows a slice-owned
+  persistence port into a fully replaceable repository seam when substitution, contract testing, or
+  migration is required.
 
 Treat the reference trees as alternative nesting choices, not additive folder mandates. Choose one
 outer layout, then apply slice cohesion inside its owner. The manifest's role globs recognize canonical

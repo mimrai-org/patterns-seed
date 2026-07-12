@@ -7,7 +7,9 @@
    port near the use case.
 5. Decide the consistency boundary. For atomic writes, use one atomic port or a transaction runner that
    supplies transaction-scoped ports; never assume independent adapters share a transaction.
-6. Implement the orchestration under `src/application/use-cases/<use-case>/`.
+6. Implement the orchestration in `src/application/use-cases/` — a single file for a small use case,
+   or a `<use-case>/` subdirectory once several files (input, result, orchestration, test doubles)
+   share the role.
 7. Write a use-case test with in-memory or recording port implementations and test commit/rollback when
    atomicity is part of the contract.
 8. Wire the use case in bootstrap; do not instantiate production adapters inside it.

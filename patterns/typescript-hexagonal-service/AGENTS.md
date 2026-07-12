@@ -22,7 +22,8 @@ Read `patterns.yaml` first and select the smallest relevant document from its ri
 - Define outbound ports from application needs and keep vendor types out of them.
 - Translate external models inside adapters.
 - Select implementations only in bootstrap.
-- Do not add CQRS, event sourcing, repositories, or interfaces unless the use case requires them.
+- Do not add CQRS, event sourcing, generic repositories, or symmetric inbound interfaces unless a use
+  case requires them; outbound ports for external capabilities are always required.
 - In a monorepo, treat each service or owning package root as part of layer identity and reject direct
   source imports across roots; use declared package exports or protocols for deliberate collaboration.
 

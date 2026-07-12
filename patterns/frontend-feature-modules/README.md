@@ -68,7 +68,8 @@ src/
 ```
 
 These segments are a menu, not a checklist. Empty directories and one-file abstractions add navigation
-cost without clarifying ownership.
+cost without clarifying ownership. The full segment menu (`hooks/`, `assets/`, `__tests__/`) is in
+[structure/feature-anatomy.md](structure/feature-anatomy.md).
 
 ## Key rules
 

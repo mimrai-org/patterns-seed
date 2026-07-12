@@ -1,6 +1,6 @@
 # Share Type-Safe Contracts Across Monorepo Apps
 
-> **Known as:** Shared contract packages · Monorepo shared contracts
+> **Known as:** Shared contract packages · Shared data contracts · TypeScript contract packages · Shared types package
 >
 > **Pattern ID:** `monorepo-shared-contracts` · **Version:** `0.2.0`
 >
@@ -8,7 +8,7 @@
 >
 > **Language:** TypeScript · **Framework:** Independent
 >
-> **Runtimes:** Browser, Node.js, workers, and mobile
+> **Runtimes:** Agnostic — any JavaScript runtime
 
 Share validated TypeScript data contracts across workspace apps without coupling their business code
 or release timing.

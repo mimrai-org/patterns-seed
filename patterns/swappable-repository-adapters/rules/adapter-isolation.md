@@ -25,8 +25,9 @@ paths and the canonical one-segment `src/modules/<capability>/...` layout. It ca
 deeper module identities, or direct imports of bare ORM and driver packages. Add project-owned restricted-
 import or dependency rules for those cases; do not claim `patterns check` covers them.
 
-The glob language also cannot express “adapter A must not import adapter B while allowing imports within
-A.” Add an import-path lint rule, package export boundary, or architecture test keyed by
-`<normalized path to the owning persistence/adapters root, first adapter directory>`. The directory name
-alone is not unique: equal adapter slugs under two modules or applications remain separate owners and
-must not gain source access to each other.
+The manifest's isolation rule (`within: **/persistence/adapters/*/**`) enforces sibling independence: any
+import crossing from one adapter directory into another fails `patterns check`, while imports inside one
+adapter remain allowed. Its identity is the captured directory name alone, so equal adapter slugs under
+different owning modules or applications share an identity and their cross-owner imports are not flagged;
+for that case add an import-path lint rule, package export boundary, or architecture test keyed by
+`<owning persistence/adapters root, adapter directory>`.

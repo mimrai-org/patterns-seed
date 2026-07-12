@@ -10,8 +10,9 @@ internals.
 ## Modules
 
 Each directory under `src/modules` owns one cohesive business capability. Its root `index.ts` is the
-only path available to the host or another module. A module may stay flat when simple; as policy grows,
-its `internal` area separates application behavior, domain rules, and technology adapters.
+only path available to the host or another module. Even a simple module keeps every private file under
+`internal/`; flat means `internal/` holds a few unlayered files, not private code at the module root.
+As policy grows, `internal` separates application behavior, domain rules, and technology adapters.
 
 Module boundaries should follow reasons to change, vocabulary, data ownership, and team ownership.
 Do not create one module per database table, route, or technical service. A capability should make

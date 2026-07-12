@@ -6,15 +6,10 @@ scope: shareable
 category: contracts
 targets:
   - monorepo
-  - multi-application-workspace
 languages:
   - typescript
 frameworks: []
-runtimes:
-  - browser
-  - node
-  - worker
-  - mobile
+runtimes: []
 tags:
   - monorepo
   - workspaces
@@ -22,8 +17,10 @@ tags:
   - runtime-validation
   - schema-evolution
 aliases:
+  - shared contract packages
   - shared data contracts
   - TypeScript contract packages
+  - shared types package
 related:
   - pattern: frontend-feature-modules
     relationship: complements
@@ -36,7 +33,6 @@ related:
     why: A modular backend can publish cross-application contracts without exposing module internals or business implementations.
 stack:
   - typescript
-  - node
 structure:
   - path: structure/workspace-package-graph.md
     is: The deployable applications with no package dependents, capability-sized contract packages, and allowed dependency directions in the workspace graph.
@@ -87,3 +83,6 @@ boundaries:
   - from: "**/packages/contracts-*/**"
     to: "**/apps/*/**"
     why: No scanned code in a contract package, including tests and scripts, may import a producing or consuming application.
+isolations:
+  - within: "apps/*/**"
+    why: Applications never import other applications; they collaborate only through contract packages.

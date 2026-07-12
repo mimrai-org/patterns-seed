@@ -31,11 +31,8 @@ Avoid passing framework request objects, mutable ORM entities, transaction handl
 responses across the whole path. Translate at the boundary that owns each representation. Request
 metadata needed by policy becomes an explicit small value rather than an ambient global lookup.
 
-Operation isolation is an additional rule: code below one root-qualified operation must not import code
-below another. Define identity as `<normalized path to the owning operations root, operation>` so
-equal-slug operations in separate modules or applications are not mistaken for the same slice. Manifest
-role globs match canonical files below any `operations/<operation>` segment, including a root nested
-inside a capability module. They cannot compare those captured identities, inspect multiple concerns
-colocated in one file, or infer that an arbitrary process-wide path contains concrete adapters. Enforce
-those cases with resolver-aware rules that classify operation identities and configured adapter roots
-while understanding aliases, re-exports, and dynamic imports.
+Operation isolation is an additional rule: code below one operation must not import code below
+another. The manifest's isolation rule enforces this by operation name at any nesting depth. What the
+manifest checks and where resolver-aware tooling remains necessary — equal operation slugs under
+different `operations/` roots, aliases, re-exports, dynamic imports, and process-wide adapter paths —
+is defined in `recipes/enforce-boundaries.md`.

@@ -1,12 +1,12 @@
 name: vertical-slice-use-case
-title: Organize Backend Features by Use Case
+title: Organize Backend Operations by Use Case
 version: 0.2.0
-description: Keep each backend request, job, or message with its validation, business logic, dependencies, and tests.
+description: Keep each backend request, job, or message with its validation, business logic, dependencies, and tests — so one change lives in one folder instead of crossing global controller, service, and repository layers.
 scope: shareable
 category: code-organization
 targets:
   - backend-operation
-  - backend-service
+  - backend-application
 languages:
   - typescript
 frameworks: []
@@ -26,11 +26,14 @@ related:
     relationship: composes-with
     why: Vertical slices can organize operations inside a larger capability module without replacing its public API or data ownership.
   - pattern: typescript-hexagonal-service
-    relationship: complements
+    relationship: composes-with
     why: Slices choose the unit of change while hexagonal boundaries isolate external technology where that cost is justified.
   - pattern: frontend-feature-modules
     relationship: complements
     why: Both colocate code by independently changing outcomes on opposite sides of a full-stack application.
+  - pattern: swappable-repository-adapters
+    relationship: composes-with
+    why: A slice-owned persistence port can grow into a fully replaceable repository seam when substitution, contract testing, or migration is required.
 stack:
   - typescript
   - node
@@ -104,9 +107,21 @@ boundaries:
   - from: "**/operations/*/contract.ts"
     to: "**/operations/*/transport.ts"
     why: Operation input and result contracts must not expose protocol-specific implementation.
+  - from: "**/operations/*/contract.ts"
+    to: "**/operations/*/adapters/**"
+    why: Technology-neutral contracts must not depend on concrete integrations.
+  - from: "**/operations/*/validation.ts"
+    to: "**/operations/*/transport.ts"
+    why: Structural input rules must remain independent from inbound delivery.
+  - from: "**/operations/*/validation.ts"
+    to: "**/operations/*/adapters/**"
+    why: Structural input rules must not depend on concrete external integrations.
   - from: "**/operations/*/ports.ts"
     to: "**/operations/*/transport.ts"
     why: Outbound capability contracts must remain independent from inbound delivery.
   - from: "**/operations/*/ports.ts"
     to: "**/operations/*/adapters/**"
     why: Slice-owned contracts define what adapters implement, not the reverse.
+isolations:
+  - within: "**/operations/*/**"
+    why: Code below one operation must not import a sibling operation's internals.

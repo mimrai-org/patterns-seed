@@ -18,9 +18,11 @@ tags:
   - feature-modules
   - public-api
   - import-boundaries
+  - colocation
 aliases:
   - frontend feature modules
   - feature-based React architecture
+  - feature folders
 related:
   - pattern: vertical-slice-use-case
     relationship: complements
@@ -78,3 +80,8 @@ boundaries:
   - from: "**/src/app/**"
     to: "**/src/features/*/internal/**"
     why: Application composition consumes explicit feature entry files rather than private implementation.
+isolations:
+  - within: "src/features/*/**"
+    why: Features must not import one another; the app layer composes them.
+  - within: "**/src/features/*/**"
+    why: Feature isolation also holds under nested application roots.
